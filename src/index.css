@@ -1,0 +1,606 @@
+:root {
+  --bg-main: #040508;
+  --bg-charcoal: #0e111a;
+  --bg-dark-crimson: #2b060d;
+  --bg-card: rgba(14, 20, 36, 0.85);
+  --bg-card-hover: rgba(22, 32, 58, 0.96);
+  --color-black: #030407;
+  --color-charcoal: #12151f;
+  --color-dark-crimson: #5c0a18;
+  --color-samurai-red: #d90429;
+  --color-samurai-red-glow: rgba(217, 4, 41, 0.55);
+  --color-parchment: #f4ecd8;
+  --color-parchment-border: #c9a86a;
+  --color-gold: #ffb703;
+  --color-gold-glow: rgba(255, 183, 3, 0.5);
+  --color-electric-blue: #00e5ff;
+  --color-electric-glow: rgba(0, 229, 255, 0.5);
+  --text-main: #f5f7fa;
+  --text-muted: #8e9bb4;
+  --text-dark: #1e1308;
+  --font-heading: 'Cinzel', serif;
+  --font-title: 'Russo One', sans-serif;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+  --font-jp: 'Noto Sans JP', sans-serif;
+  --font-brush: 'Yuji Syuku', serif;
+  --glow-cyan: 0 0 25px rgba(0, 229, 255, 0.45);
+  --glow-gold: 0 0 25px rgba(255, 183, 3, 0.45);
+  --glow-samurai: 0 0 35px rgba(217, 4, 41, 0.6);
+  --glow-fire: 0 0 30px rgba(255, 51, 68, 0.5);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  overflow-x: hidden;
+  line-height: 1.6;
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(0, 229, 255, 0.08) 0%, transparent 60%),
+    radial-gradient(circle at 10% 35%, rgba(157, 78, 221, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 90% 65%, rgba(255, 170, 0, 0.08) 0%, transparent 50%),
+    linear-gradient(180deg, #06080e 0%, #0a0d17 50%, #06080e 100%);
+  background-attachment: fixed;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #06080e;
+}
+::-webkit-scrollbar-thumb {
+  background: #00e5ff55;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-cyan);
+}
+
+/* Typography Utilities */
+.font-title {
+  font-family: var(--font-title);
+  letter-spacing: 0.03em;
+}
+.font-heading {
+  font-family: var(--font-heading);
+}
+.font-jp {
+  font-family: var(--font-jp);
+}
+
+/* Glassmorphic Container */
+.glass-panel {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 229, 255, 0.18);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-panel:hover {
+  border-color: rgba(0, 229, 255, 0.4);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), var(--glow-cyan);
+}
+
+/* Cyber Button Styling */
+.btn-cyber-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, #00b4d8 0%, #0077b6 50%, #03045e 100%);
+  color: #ffffff;
+  padding: 12px 28px;
+  border-radius: 30px;
+  font-family: var(--font-title);
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-decoration: none;
+  border: 1px solid rgba(0, 229, 255, 0.6);
+  box-shadow: 0 0 18px rgba(0, 229, 255, 0.4);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.btn-cyber-primary:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 0 28px rgba(0, 229, 255, 0.8);
+  border-color: #ffffff;
+  color: #ffffff;
+}
+
+.btn-cyber-gold {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, #ffb703 0%, #fb8500 100%);
+  color: #111;
+  padding: 12px 28px;
+  border-radius: 30px;
+  font-family: var(--font-title);
+  font-size: 0.95rem;
+  font-weight: 800;
+  text-decoration: none;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 20px rgba(251, 133, 0, 0.5);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.btn-cyber-gold:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 0 30px rgba(255, 183, 3, 0.9);
+  color: #000;
+}
+
+.btn-cyber-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(14, 20, 36, 0.6);
+  color: #00e5ff;
+  padding: 10px 24px;
+  border-radius: 30px;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-decoration: none;
+  border: 1px solid rgba(0, 229, 255, 0.4);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.btn-cyber-outline:hover {
+  background: rgba(0, 229, 255, 0.15);
+  border-color: #00e5ff;
+  box-shadow: 0 0 15px rgba(0, 229, 255, 0.3);
+  color: #ffffff;
+}
+
+/* Japanese Vertical Calligraphy Ribbon */
+.jp-vertical-text {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  font-family: var(--font-jp);
+  font-weight: 900;
+  letter-spacing: 0.25em;
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow: 0 0 10px rgba(0, 229, 255, 0.6);
+}
+
+/* Animations */
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.03); }
+}
+
+@keyframes waveBar {
+  0%, 100% { height: 4px; }
+  50% { height: 22px; }
+}
+
+@keyframes floatGentle {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+.animate-float {
+  animation: floatGentle 4s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+/* Parchment Treasure Banner */
+.treasure-scroll {
+  background: #ecd9b3;
+  background-image: radial-gradient(#d6bc8b 1px, transparent 1px), radial-gradient(#d6bc8b 1px, #ecd9b3 1px);
+  background-size: 20px 20px;
+  background-position: 0 0, 10px 10px;
+  border: 3px solid #8d6728;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), inset 0 0 20px rgba(117, 85, 30, 0.4);
+  color: #2b1d09;
+  border-radius: 8px;
+  position: relative;
+}
+
+.treasure-scroll::before,
+.treasure-scroll::after {
+  content: '⚓';
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.4rem;
+  color: #8d6728;
+}
+.treasure-scroll::before { left: 16px; }
+.treasure-scroll::after { right: 16px; }
+
+/* Audio Waveform Bars */
+.wave-bar {
+  width: 3px;
+  background: var(--accent-cyan);
+  border-radius: 2px;
+  animation: waveBar 1.2s ease-in-out infinite;
+}
+.wave-bar:nth-child(2) { animation-delay: 0.15s; }
+.wave-bar:nth-child(3) { animation-delay: 0.3s; }
+.wave-bar:nth-child(4) { animation-delay: 0.45s; }
+.wave-bar:nth-child(5) { animation-delay: 0.6s; }
+.wave-bar:nth-child(6) { animation-delay: 0.25s; }
+.wave-bar:nth-child(7) { animation-delay: 0.1s; }
+.wave-bar:nth-child(8) { animation-delay: 0.5s; }
+
+/* WANTED Poster Badge */
+.wanted-poster {
+  background: #f7e9c9;
+  border: 5px solid #6b4d1b;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 0 35px rgba(122, 85, 23, 0.35);
+  color: #3b280c;
+  font-family: 'Cinzel', serif;
+  text-align: center;
+  position: relative;
+  border-radius: 4px;
+}
+
+.wanted-poster h1 {
+  font-size: 2.8rem;
+  letter-spacing: 0.15em;
+  font-weight: 900;
+  margin: 0;
+  color: #241604;
+  line-height: 1;
+}
+
+.wanted-poster .dead-or-alive {
+  font-size: 0.95rem;
+  letter-spacing: 0.35em;
+  font-weight: 800;
+  margin-top: 4px;
+  color: #4b3414;
+}
+
+.wanted-poster .photo-frame {
+  margin: 14px auto;
+  border: 3px solid #6b4d1b;
+  background: #e8d3a7;
+  overflow: hidden;
+  box-shadow: inset 0 0 15px rgba(0,0,0,0.25);
+}
+
+.wanted-poster .marine-seal {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  opacity: 0.65;
+  transform: rotate(-15deg);
+  pointer-events: none;
+}
+
+@keyframes spinSlow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ══════════════════════════════════════════════
+   CINEMATIC SPEC UTILITIES (26-POINT UPGRADE)
+   ══════════════════════════════════════════════ */
+
+/* Custom Cursor Classes */
+body.custom-cursor-enabled,
+body.custom-cursor-enabled a,
+body.custom-cursor-enabled button,
+body.custom-cursor-enabled [role="button"] {
+  cursor: none !important;
+}
+
+/* Giant Typography Stroke & Masks */
+.giant-typography-stroke {
+  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.18);
+  color: transparent;
+  font-family: var(--font-title);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  user-select: none;
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+.giant-typography-stroke:hover {
+  -webkit-text-stroke: 1.5px var(--color-samurai-red);
+}
+
+.giant-typography-red-stroke {
+  -webkit-text-stroke: 1.5px rgba(217, 4, 41, 0.35);
+  color: transparent;
+  font-family: var(--font-title);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  user-select: none;
+  pointer-events: none;
+}
+
+.giant-typography-blue-stroke {
+  -webkit-text-stroke: 1.5px rgba(0, 229, 255, 0.35);
+  color: transparent;
+  font-family: var(--font-title);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Japanese Brush Accent Font */
+.font-brush {
+  font-family: var(--font-brush);
+}
+
+/* Red Hanko / Samurai Seal */
+.wano-hanko-seal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 3px solid #d90429;
+  border-radius: 8px;
+  color: #d90429;
+  font-family: var(--font-brush);
+  font-weight: 900;
+  font-size: 1.25rem;
+  background: rgba(217, 4, 41, 0.12);
+  box-shadow: 0 0 16px rgba(217, 4, 41, 0.3), inset 0 0 8px rgba(217, 4, 41, 0.2);
+  user-select: none;
+  transform: rotate(-5deg);
+}
+
+/* Masked Image Reveal Keyframes & Class */
+.mask-reveal {
+  clip-path: inset(100% 0 0 0);
+  filter: blur(12px);
+  opacity: 0;
+  transform: scale(1.08);
+  transition: clip-path 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+              filter 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mask-reveal.revealed {
+  clip-path: inset(0 0 0 0);
+  filter: blur(0px);
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Blur to Sharp Staggered Entrance */
+.reveal-blur-up {
+  opacity: 0;
+  filter: blur(15px);
+  transform: translateY(40px) scale(0.96);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              filter 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-blur-up.revealed {
+  opacity: 1;
+  filter: blur(0px);
+  transform: translateY(0) scale(1);
+}
+
+/* 3D Card Perspective Parent */
+.perspective-container {
+  perspective: 1200px;
+  transform-style: preserve-3d;
+}
+
+/* Samurai Red Cyber Button */
+.btn-samurai-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, #d90429 0%, #9b001a 60%, #4a000d 100%);
+  color: #ffffff;
+  padding: 13px 32px;
+  border-radius: 30px;
+  font-family: var(--font-title);
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-decoration: none;
+  border: 1px solid rgba(255, 90, 110, 0.7);
+  box-shadow: 0 0 22px rgba(217, 4, 41, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition: all 0.28s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.btn-samurai-primary:hover {
+  transform: translateY(-2px) scale(1.025);
+  box-shadow: 0 0 35px rgba(217, 4, 41, 0.85);
+  border-color: #ffffff;
+  color: #ffffff;
+}
+
+/* Edge Floating Badges */
+.floating-edge-pill {
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+  background: rgba(10, 14, 24, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 5px 12px;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  user-select: none;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   CINEMATIC PIRATE CREW & CONTACT SECTION STYLES
+   ══════════════════════════════════════════════════════════════════ */
+
+/* 3D Extruded Pirate Distressed Title */
+.pirate-crew-title {
+  font-family: var(--font-title);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: linear-gradient(180deg, #fff7d6 0%, #ffc83b 25%, #ff9500 50%, #b85d00 75%, #592800 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 
+    0 1px 0 #8f4700,
+    0 2px 0 #733900,
+    0 3px 0 #572b00,
+    0 4px 0 #3b1d00,
+    0 5px 0 #1f0f00,
+    0 8px 16px rgba(0, 0, 0, 0.95),
+    0 0 40px rgba(255, 183, 3, 0.6),
+    0 0 80px rgba(0, 229, 255, 0.4);
+  position: relative;
+}
+
+/* Animated Shimmer / Light Sweep */
+.pirate-crew-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.pirate-crew-shimmer::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -60%;
+  width: 50%;
+  height: 200%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.0) 30%,
+    rgba(255, 255, 255, 0.45) 50%,
+    rgba(255, 255, 255, 0.0) 70%,
+    transparent 100%
+  );
+  transform: rotate(30deg);
+  animation: lightSweep 4.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  pointer-events: none;
+}
+
+@keyframes lightSweep {
+  0% {
+    left: -70%;
+  }
+  35%, 100% {
+    left: 150%;
+  }
+}
+
+/* Ship Bobbing / Gentle Wave Sway */
+@keyframes shipBobbing {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(0.4deg);
+  }
+}
+
+.ship-deck-float {
+  animation: shipBobbing 6s ease-in-out infinite;
+}
+
+/* Compass Spin Animation */
+@keyframes compassSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spin-on-hover:hover .compass-needle {
+  animation: compassSpin 2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Manga Speed Lines Overlay */
+.manga-speed-lines {
+  background: repeating-conic-gradient(
+    from 0deg,
+    rgba(255, 255, 255, 0.12) 0deg 1deg,
+    transparent 1deg 4deg
+  );
+}
+
+/* Ink Splash Explode */
+@keyframes inkExplode {
+  0% {
+    filter: grayscale(100%) contrast(200%);
+    transform: scale(0.95);
+  }
+  50% {
+    filter: grayscale(60%) contrast(150%);
+    transform: scale(1.02);
+  }
+  100% {
+    filter: grayscale(0%) contrast(100%);
+    transform: scale(1);
+  }
+}
+
+.ink-exploded {
+  animation: inkExplode 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Weathered Parchment Edge */
+.parchment-frame {
+  background: radial-gradient(circle, #2b1f14 0%, #160f09 80%, #0a0704 100%);
+  border: 3px solid #8e6a39;
+  box-shadow: 
+    inset 0 0 35px rgba(0, 0, 0, 0.85),
+    0 20px 50px rgba(0, 0, 0, 0.9),
+    0 0 25px rgba(218, 165, 32, 0.25);
+}
+
+/* Lantern Light Pulse */
+@keyframes lanternPulse {
+  0%, 100% {
+    opacity: 0.8;
+    filter: drop-shadow(0 0 12px rgba(255, 170, 0, 0.7));
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 24px rgba(255, 200, 50, 0.95));
+  }
+}
+
+.lantern-glow {
+  animation: lanternPulse 3s ease-in-out infinite;
+}
+
+
