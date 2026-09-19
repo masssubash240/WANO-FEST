@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { FEATURED_EVENTS } from '../data/eventData';
+import { SITE_CONFIG } from '../data/siteConfig';
+import { CoordinatorStrip } from './CoordinatorStrip';
 interface FeaturedEventsProps {
   filterCategory: 'all' | 'tech' | 'non-tech';
   onFilterChange: (cat: 'all' | 'tech' | 'non-tech') => void;
@@ -19,6 +21,8 @@ const EVENT_ICONS: Record<string, string> = {
   'coding-challenge': '💻',
   'ai-prompt': '🤖',
   'ui-ux-challenge': '🎨',
+  'project-expo': '🚀',
+  'paper-presentation': '📄',
   'will-of-d': '🧠',
   'red-line-rush': '🗺️',
   'nikas-dance-arena': '💃',
@@ -303,10 +307,11 @@ const PosterCard: React.FC<CardProps> = ({ event, onOpenDetail, onRegister }) =>
           {/* Coordinator Pill */}
           <div
             style={{
-              display: 'inline-flex',
-              alignItems: 'flex-start',
-              gap: '6px',
-              padding: '6px 12px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '8px',
+              padding: '8px 12px',
               borderRadius: '8px',
               background: 'rgba(212, 175, 55, 0.08)',
               border: '1px solid rgba(212, 175, 55, 0.25)',
@@ -314,18 +319,43 @@ const PosterCard: React.FC<CardProps> = ({ event, onOpenDetail, onRegister }) =>
               color: '#d4af37',
               marginBottom: '16px',
               maxWidth: '100%',
+              boxSizing: 'border-box',
             }}
           >
-            <span>👤</span>
-            <span>
-              <span style={{ fontWeight: 700 }}>Coordinator: </span>
-              <span>{event.coordinator}</span>
-              {event.department && (
-                <span style={{ display: 'block', marginTop: '3px', color: '#94a3b8', fontSize: '0.68rem' }}>
-                  {[event.year, event.department].filter(Boolean).join(' • ')}
-                </span>
-              )}
-            </span>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '6px' }}>
+              <span>👤</span>
+              <span>
+                <span style={{ fontWeight: 700 }}>Coordinator: </span>
+                <span style={{ color: '#ffffff' }}>{event.coordinator}</span>
+                {event.department && (
+                  <span style={{ display: 'block', marginTop: '2px', color: '#94a3b8', fontSize: '0.68rem' }}>
+                    {[event.year, event.department].filter(Boolean).join(' • ')}
+                  </span>
+                )}
+              </span>
+            </div>
+            {event.phone && (
+              <a
+                href={`tel:${event.phone.replace(/\s+/g, '')}`}
+                onClick={(e) => e.stopPropagation()}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  padding: '4px 10px',
+                  borderRadius: '6px',
+                  background: 'rgba(0, 229, 255, 0.15)',
+                  border: '1px solid rgba(0, 229, 255, 0.4)',
+                  color: '#00e5ff',
+                  textDecoration: 'none',
+                  fontSize: '0.72rem',
+                  fontWeight: 800,
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                📞 {event.phone}
+              </a>
+            )}
           </div>
 
           {/* Highlights */}
@@ -478,6 +508,24 @@ const PosterCard: React.FC<CardProps> = ({ event, onOpenDetail, onRegister }) =>
                 ⚔️ Register
               </button>
             </div>
+
+            {/* Under every event card: Coordinators strip (Part 1 A) */}
+            <CoordinatorStrip
+              coordinators={
+                SITE_CONFIG.eventCoordinators[event.id] ||
+                (event.coordinator
+                  ? [
+                      {
+                        name: event.coordinator,
+                        phone: '+91 95009 81246',
+                        tel: '+919500981246',
+                        role: `${event.department || 'Event'} Lead`,
+                      },
+                    ]
+                  : [])
+              }
+              compact
+            />
           </div>
         </div>
       </div>
@@ -489,6 +537,7 @@ export const FeaturedEvents: React.FC<FeaturedEventsProps> = ({
   filterCategory,
   onFilterChange,
   onOpenEventDetail,
+  onRegisterClick,
 }) => {
   const [regToast, setRegToast] = useState<string | null>(null);
   const toastTimer = useRef<number | null>(null);
@@ -496,6 +545,10 @@ export const FeaturedEvents: React.FC<FeaturedEventsProps> = ({
   // Spec Section 20: open the registration link when available, otherwise
   // show the "Registration details will be announced soon." confirmation.
   const handleRegister = (event: typeof FEATURED_EVENTS[0]) => {
+    if (onRegisterClick) {
+      onRegisterClick(event.title);
+      return;
+    }
     if (event.registrationLink) {
       window.open(event.registrationLink, '_blank', 'noopener,noreferrer');
       return;

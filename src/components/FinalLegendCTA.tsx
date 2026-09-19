@@ -29,6 +29,48 @@ export const FinalLegendCTA: React.FC<FinalLegendCTAProps> = ({
         borderTop: '1px solid rgba(212, 175, 55, 0.25)',
       }}
     >
+      {/* ─── ROTATING BACKGROUND VIDEO ─── */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: '-15%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 0,
+          perspective: '1200px',
+          pointerEvents: 'none',
+        }}
+      >
+        <video
+          src="/video3.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          style={{
+            width: '120%',
+            height: '120%',
+            objectFit: 'cover',
+            opacity: 0.18,
+            animation: 'legendVideoRotate 25s linear infinite',
+            transformStyle: 'preserve-3d',
+          }}
+        />
+      </div>
+
+      {/* Dark overlay so text stays readable over the rotating video */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'radial-gradient(ellipse 80% 80% at 50% 50%, rgba(2, 6, 23, 0.55) 0%, rgba(2, 6, 23, 0.88) 100%)',
+          zIndex: 0,
+          pointerEvents: 'none',
+        }}
+      />
+
       {/* Ambient Sea Mist & Golden Glow */}
       <div
         style={{
@@ -41,8 +83,20 @@ export const FinalLegendCTA: React.FC<FinalLegendCTAProps> = ({
           background: 'radial-gradient(circle, rgba(212, 175, 55, 0.12) 0%, transparent 70%)',
           filter: 'blur(70px)',
           pointerEvents: 'none',
+          zIndex: 1,
         }}
       />
+
+      {/* Keyframes for rotating video */}
+      <style>{`
+        @keyframes legendVideoRotate {
+          0%   { transform: rotateY(0deg)   rotateX(3deg)  scale(1.05); }
+          25%  { transform: rotateY(8deg)   rotateX(-2deg) scale(1.08); }
+          50%  { transform: rotateY(0deg)   rotateX(-3deg) scale(1.05); }
+          75%  { transform: rotateY(-8deg)  rotateX(2deg)  scale(1.08); }
+          100% { transform: rotateY(0deg)   rotateX(3deg)  scale(1.05); }
+        }
+      `}</style>
 
       {/* Decorative Nautical Elements */}
       <div

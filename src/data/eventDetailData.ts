@@ -164,7 +164,7 @@ type EventSeed = {
   submission?: string[];
   notes?: string[];
   faq?: { question: string; answer: string }[];
-  coordinator?: { name: string; department: string; year: string; role?: string }[];
+  coordinator?: { name: string; department: string; year: string; role?: string; contact?: string }[];
   crewType?: 'SOLO' | 'DUO' | 'TRIO' | 'SQUAD';
   minMembers: number;
   maxMembers: number;
@@ -273,6 +273,117 @@ const makeDetail = (seed: EventSeed): DetailedEventData => {
 };
 
 const events: EventSeed[] = [
+  {
+    id: 'project-expo',
+    missionNumber: 'EVENT 05',
+    title: 'Project Expo',
+    japaneseTitle: '創造の証 // BUILD INNOVATE INSPIRE',
+    tagline: 'Build. Innovate. Inspire.',
+    missionType: 'TECH',
+    category: 'TECHNICAL — INNOVATION & PROTOTYPE',
+    image: '/images/project_expo_banner.png',
+    coordinator: [
+      { name: 'JAYASRI', department: 'Cybersecurity', year: 'III', role: 'Project Expo Coordinator', contact: '9342481695' }
+    ],
+    crewSize: '2–4 Members',
+    battleTime: 'Full Day Exhibition & Evaluation',
+    mode: 'PROJECT SHOWCASE & DEMONSTRATION',
+    minMembers: 2,
+    maxMembers: 4,
+    description: 'Project Expo is a technical innovation event where students can showcase their innovative projects, working prototypes, software applications, hardware solutions, AI systems, cybersecurity projects, IoT solutions, and emerging technology ideas.',
+    rules: [
+      'Each team must present one project.',
+      'The project should be developed by the participating team.',
+      'Participants must explain the problem being solved.',
+      'Teams must explain their proposed solution and implementation.',
+      'Teams must explain the technologies and tools used.',
+      'Judges may ask technical questions about the project.',
+      'Teams should demonstrate the working prototype whenever applicable.',
+      'Participants must bring their own required hardware, components, and accessories.',
+      'Projects must be safe and suitable for a college technical event.',
+      "Plagiarism or falsely claiming another team's project is prohibited.",
+      "Participants must not damage venue infrastructure or another team's project.",
+      "Judges' decision regarding evaluation and results will be final."
+    ],
+    judging: [
+      { criterion: 'Innovation & Originality', marks: 25, description: 'Uniqueness of idea and creative approach to problem solving (25%).' },
+      { criterion: 'Technical Implementation', marks: 25, description: 'Architecture, code quality, hardware design, and tech complexity (25%).' },
+      { criterion: 'Problem Solving', marks: 20, description: 'Effectiveness of the solution addressing the real-world issue (20%).' },
+      { criterion: 'Real-World Impact', marks: 15, description: 'Practical viability, scalability, and societal impact (15%).' },
+      { criterion: 'Presentation & Demonstration', marks: 15, description: 'Working prototype demo, clarity, and team communication (15%).' },
+    ],
+    submission: [
+      'Artificial Intelligence & Machine Learning',
+      'Cybersecurity & Network Defense',
+      'Web & Mobile Applications',
+      'IoT & Smart Systems',
+      'Robotics & Automation',
+      'Blockchain & Cloud Computing',
+      'Data Science & Analytics',
+      'Healthcare, Green Tech & FinTech',
+    ],
+    notes: [
+      'Team Size: 2–4 Members per team.',
+      'One project per team.',
+      'All team members should be available during presentation/evaluation.',
+      'Team members must be registered before the event.',
+      'Team changes after registration are not allowed.',
+      'Coordinator: JAYASRI • Phone: 9342481695',
+    ],
+  },
+  {
+    id: 'paper-presentation',
+    missionNumber: 'EVENT 06',
+    title: 'Paper Presentation',
+    japaneseTitle: '叡智の探求 // PRESENT IDEAS CREATE IMPACT',
+    tagline: 'Present Ideas • Create Impact',
+    missionType: 'TECH',
+    category: 'TECHNICAL — RESEARCH & PRESENTATION',
+    image: '/images/paper_presentation_banner.png',
+    coordinator: [
+      { name: 'JANANI', department: 'Cybersecurity', year: 'III', role: 'Paper Presentation Coordinator', contact: '6385326280' }
+    ],
+    crewSize: '1–3 Members',
+    battleTime: '10 Minutes (7 Mins Presentation + 3 Mins Q&A)',
+    mode: 'SLIDE PRESENTATION & DEFENSE',
+    minMembers: 1,
+    maxMembers: 3,
+    description: 'Paper Presentation is a technical presentation event where participants present innovative ideas, research concepts, emerging technologies, technical solutions, and problem-solving approaches through a professional presentation.',
+    rules: [
+      'The topic must be related to technology, innovation, research, or engineering.',
+      'Participants must prepare their own presentation.',
+      'Content should be original and technically relevant.',
+      'Proper references must be provided wherever required.',
+      'Participants must stay within the allotted time (7 min presentation + 3 min Q&A).',
+      'Judges may ask technical questions after the presentation.',
+      'Participants should be able to explain the content of their presentation.',
+      'Plagiarism may result in disqualification.',
+      'Participants should keep a backup copy of their presentation.',
+      'Inappropriate or offensive content is not permitted.',
+      'The final presentation submission format will be announced by the organizers.',
+      "Judges' decision will be final."
+    ],
+    judging: [
+      { criterion: 'Technical Knowledge', marks: 25, description: 'Depth of technical understanding and engineering concepts (25%).' },
+      { criterion: 'Innovation & Originality', marks: 20, description: 'Novelty of approach and research freshness (20%).' },
+      { criterion: 'Content Quality', marks: 20, description: 'Structure, methodology, and empirical evidence (20%).' },
+      { criterion: 'Presentation Skills', marks: 20, description: 'Visual design of slides, vocal delivery, and timing (20%).' },
+      { criterion: 'Q&A / Technical Understanding', marks: 15, description: 'Handling judges questions and defense of thesis (15%).' },
+    ],
+    submission: [
+      'Structure: 1. Title | 2. Problem Statement | 3. Background | 4. Existing System',
+      'Structure: 5. Proposed Idea | 6. Methodology | 7. Architecture | 8. Innovation',
+      'Structure: 9. Applications | 10. Advantages | 11. Future Scope | 12. Conclusion | 13. References',
+      'Timing: Presentation 7 Mins • Q&A 3 Mins • Total 10 Mins',
+    ],
+    notes: [
+      'Team Size: 1–3 Members per team.',
+      'One paper/presentation per team.',
+      'All registered participants must be present during presentation.',
+      'Team changes after registration are not allowed.',
+      'Coordinator: JANANI • Phone: 6385326280',
+    ],
+  },
   {
     id: 'capture-the-flag', missionNumber: 'EVENT 01', title: 'Capture the Flag', japaneseTitle: '旗を奪え // CYBER MISSION',
     tagline: 'FIND • EXPLOIT • SOLVE • CAPTURE', missionType: 'TECH', category: 'TECHNICAL — CYBERSECURITY', image: '/images/capture_the_flag.png',

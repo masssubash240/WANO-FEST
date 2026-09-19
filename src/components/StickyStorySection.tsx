@@ -9,6 +9,7 @@ interface StoryChapter {
   quote: string;
   description: string;
   image: string;
+  video?: string;
   accent: string;
 }
 
@@ -23,6 +24,7 @@ const CHAPTERS: StoryChapter[] = [
     description:
       'Wano Fest is not merely a symposium; it is a legendary pilgrimage. Across the digital Grand Line, brightest engineering prodigies, digital artists, and creative rebels gather under one banner to challenge existing horizons.',
     image: '/images/will_of_d.jpg',
+    video: '/luffy2.mp4',
     accent: '#00e5ff',
   },
   {
@@ -35,6 +37,7 @@ const CHAPTERS: StoryChapter[] = [
     description:
       'In the Zoro Tech Division, code is treated as steel. Algorithms are honed with discipline, neural nets are forged with precision, and every security exploit patched is a duel won against chaos.',
     image: '/images/zoro_tech.jpg',
+    video: '/video2.mp4',
     accent: '#d90429',
   },
   {
@@ -47,6 +50,7 @@ const CHAPTERS: StoryChapter[] = [
     description:
       'From vibrant cosplay masquerades to midnight hackathons, the power of CybiTradic lies in Nakama. Tech and Non-Tech dissolve into a single electrifying celebration where everyone finds their crew.',
     image: '/images/nakama_tribute.jpg',
+    video: '/luffy2.mp4',
     accent: '#ffb703',
   },
   {
@@ -59,6 +63,7 @@ const CHAPTERS: StoryChapter[] = [
     description:
       'When the final clue is solved and the last match ends, champions will rise. Winners will be crowned across nine events — and your story becomes part of the symposium legend.',
     image: '/images/grand_line_visuals.jpg',
+    video: '/all.mp4',
     accent: '#9d4edd',
   },
 ];
@@ -95,7 +100,7 @@ export const StickyStorySection: React.FC = () => {
         position: 'relative',
         backgroundColor: '#040508',
         padding: '120px 24px',
-        overflow: 'hidden',
+        overflow: 'clip',
       }}
     >
       {/* Background Ambient Aura */}
@@ -168,14 +173,7 @@ export const StickyStorySection: React.FC = () => {
         </div>
 
         {/* ─── TWO-COLUMN STICKY LAYOUT ─── */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
-            gap: '60px',
-            alignItems: 'start',
-          }}
-        >
+        <div className="sticky-story-grid">
           {/* LEFT: STICKY CINEMATIC VISUAL FRAME */}
           <div
             style={{
@@ -190,9 +188,10 @@ export const StickyStorySection: React.FC = () => {
               backgroundColor: '#080c16',
             }}
           >
-            {/* BACKGROUND VIDEO — LUFFY (full frame) */}
+            {/* BACKGROUND VIDEO — LUFFY 2 (full frame) */}
             <video
-              src="/luffy.mp4"
+              key={currentChapter.video || '/luffy2.mp4'}
+              src={currentChapter.video || '/luffy2.mp4'}
               autoPlay
               muted
               loop
@@ -302,6 +301,8 @@ export const StickyStorySection: React.FC = () => {
                   key={ch.id}
                   ref={(el) => { chapterRefs.current[idx] = el; }}
                   style={{
+                    position: 'relative',
+                    overflow: 'hidden',
                     padding: '36px',
                     borderRadius: '20px',
                     background: isCurrent ? 'rgba(14, 20, 36, 0.85)' : 'rgba(10, 14, 24, 0.4)',
@@ -313,76 +314,117 @@ export const StickyStorySection: React.FC = () => {
                     backdropFilter: 'blur(12px)',
                   }}
                 >
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '12px',
-                      marginBottom: '10px',
-                    }}
-                  >
-                    <span
+                  {/* Background video specifically for Story 03 (The Straw Hat Alliance) */}
+                  {ch.id === 'ch-03' && (
+                    <div
+                      style={{
+                        position: 'absolute',
+                        inset: 0,
+                        zIndex: 0,
+                        pointerEvents: 'none',
+                        overflow: 'hidden',
+                        borderRadius: '20px',
+                      }}
+                    >
+                      <video
+                        src="/luffy2.mp4"
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        preload="auto"
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          opacity: isCurrent ? 0.38 : 0.18,
+                          filter: 'contrast(1.15) brightness(0.85)',
+                          transition: 'opacity 0.5s ease',
+                        }}
+                      />
+                      <div
+                        style={{
+                          position: 'absolute',
+                          inset: 0,
+                          background:
+                            'linear-gradient(135deg, rgba(8, 12, 24, 0.94) 0%, rgba(14, 20, 36, 0.82) 50%, rgba(8, 12, 24, 0.94) 100%)',
+                        }}
+                      />
+                    </div>
+                  )}
+
+                  <div style={{ position: 'relative', zIndex: 1 }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                        marginBottom: '10px',
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontFamily: 'var(--font-title)',
+                          fontSize: '0.85rem',
+                          fontWeight: 900,
+                          color: ch.accent,
+                          letterSpacing: '0.2em',
+                        }}
+                      >
+                        {ch.step}
+                      </span>
+                      <span style={{ color: 'rgba(255,255,255,0.2)' }}>•</span>
+                      <span
+                        style={{
+                          fontSize: '0.75rem',
+                          fontWeight: 800,
+                          color: 'var(--text-muted)',
+                          letterSpacing: '0.15em',
+                        }}
+                      >
+                        {ch.subtitle}
+                      </span>
+                    </div>
+
+                    <h3
                       style={{
                         fontFamily: 'var(--font-title)',
-                        fontSize: '0.85rem',
+                        fontSize: 'clamp(1.6rem, 2.5vw, 2.3rem)',
                         fontWeight: 900,
-                        color: ch.accent,
-                        letterSpacing: '0.2em',
+                        color: '#ffffff',
+                        letterSpacing: '0.04em',
+                        margin: '0 0 16px 0',
                       }}
                     >
-                      {ch.step}
-                    </span>
-                    <span style={{ color: 'rgba(255,255,255,0.2)' }}>•</span>
-                    <span
+                      {ch.title}
+                    </h3>
+
+                    <blockquote
                       style={{
-                        fontSize: '0.75rem',
-                        fontWeight: 800,
-                        color: 'var(--text-muted)',
-                        letterSpacing: '0.15em',
+                        fontFamily: "'Cinzel', serif",
+                        fontStyle: 'italic',
+                        fontSize: '0.98rem',
+                        color: '#ffb703',
+                        lineHeight: 1.6,
+                        margin: '0 0 16px 0',
+                        paddingLeft: '16px',
+                        borderLeft: `3px solid ${ch.accent}`,
                       }}
                     >
-                      {ch.subtitle}
-                    </span>
+                      {ch.quote}
+                    </blockquote>
+
+                    <p
+                      style={{
+                        fontSize: '0.94rem',
+                        color: 'rgba(220, 230, 245, 0.85)',
+                        lineHeight: 1.8,
+                        margin: 0,
+                      }}
+                    >
+                      {ch.description}
+                    </p>
                   </div>
-
-                  <h3
-                    style={{
-                      fontFamily: 'var(--font-title)',
-                      fontSize: 'clamp(1.6rem, 2.5vw, 2.3rem)',
-                      fontWeight: 900,
-                      color: '#ffffff',
-                      letterSpacing: '0.04em',
-                      margin: '0 0 16px 0',
-                    }}
-                  >
-                    {ch.title}
-                  </h3>
-
-                  <blockquote
-                    style={{
-                      fontFamily: "'Cinzel', serif",
-                      fontStyle: 'italic',
-                      fontSize: '0.98rem',
-                      color: '#ffb703',
-                      lineHeight: 1.6,
-                      margin: '0 0 16px 0',
-                      paddingLeft: '16px',
-                      borderLeft: `3px solid ${ch.accent}`,
-                    }}
-                  >
-                    {ch.quote}
-                  </blockquote>
-
-                  <p
-                    style={{
-                      fontSize: '0.94rem',
-                      color: 'rgba(220, 230, 245, 0.85)',
-                      lineHeight: 1.8,
-                      margin: 0,
-                    }}
-                  >
-                    {ch.description}
-                  </p>
                 </div>
               );
             })}
@@ -447,20 +489,39 @@ export const StickyStorySection: React.FC = () => {
                 (e.currentTarget as HTMLDivElement).style.boxShadow = `0 30px 80px rgba(0,0,0,0.8), 0 0 40px ${ch.accent}22`;
               }}
             >
-              {/* Chapter Image */}
-              <img
-                src={ch.image}
-                alt={ch.title}
-                loading="lazy"
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  objectPosition: 'center',
-                }}
-              />
+              {/* Chapter Media: Video for Story 03, image for others */}
+              {ch.id === 'ch-03' ? (
+                <video
+                  src="/luffy2.mp4"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="auto"
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    objectPosition: 'center',
+                  }}
+                />
+              ) : (
+                <img
+                  src={ch.image}
+                  alt={ch.title}
+                  loading="lazy"
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    objectPosition: 'center',
+                  }}
+                />
+              )}
 
               {/* Gradient Overlay */}
               <div

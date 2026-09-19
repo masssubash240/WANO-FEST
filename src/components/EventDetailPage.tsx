@@ -7,12 +7,14 @@ interface EventDetailPageProps {
   initialTab?: string;
   onBackToHome?: () => void;
   onSelectEvent?: (id: string) => void;
+  onOpenRegister?: (eventName?: string, eventType?: 'technical' | 'non-technical') => void;
 }
 
 export const EventDetailPage: React.FC<EventDetailPageProps> = ({
   eventId = 'will-of-d',
   initialTab = 'overview',
-  onBackToHome
+  onBackToHome,
+  onOpenRegister,
 }) => {
   const event: DetailedEventData = DETAILED_EVENTS[eventId] || DETAILED_EVENTS['will-of-d'] || Object.values(DETAILED_EVENTS)[0];
 
@@ -164,6 +166,11 @@ export const EventDetailPage: React.FC<EventDetailPageProps> = ({
   });
   const [regNotice, setRegNotice] = useState(false);
   const openRegistration = () => {
+    if (onOpenRegister) {
+      const type = (event.category === 'tech' ? 'technical' : 'non-technical') as 'technical' | 'non-technical';
+      onOpenRegister(event.title, type);
+      return;
+    }
     // Spec Section 20: open the registration link when available,
     // otherwise show the "announced soon" confirmation.
     if (event.registrationLink) {
@@ -2938,8 +2945,53 @@ export const EventDetailPage: React.FC<EventDetailPageProps> = ({
                   <div style={{ fontSize: '0.85rem', color: '#8e9bb4' }}>
                     {[c.year, c.department].filter(Boolean).join(' • ') || 'Department: To Be Announced'}
                   </div>
-                  <div style={{ fontSize: '0.8rem', color: '#6b7a94', marginTop: '6px' }}>
-                    {c.contact || '📞 Contact details will be announced soon.'}
+                  <div style={{ marginTop: '12px' }}>
+                    {c.contact ? (
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                        <a
+                          href={`tel:${c.contact.replace(/\s+/g, '')}`}
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            color: '#00e5ff',
+                            fontSize: '0.85rem',
+                            fontWeight: 800,
+                            textDecoration: 'none',
+                            padding: '8px 16px',
+                            borderRadius: '10px',
+                            background: 'rgba(0, 229, 255, 0.12)',
+                            border: '1px solid rgba(0, 229, 255, 0.35)',
+                            transition: 'all 0.2s ease',
+                          }}
+                        >
+                          📞 {c.contact}
+                        </a>
+                        <a
+                          href={`https://wa.me/91${c.contact.replace(/\D/g, '')}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            color: '#25d366',
+                            fontSize: '0.85rem',
+                            fontWeight: 800,
+                            textDecoration: 'none',
+                            padding: '8px 16px',
+                            borderRadius: '10px',
+                            background: 'rgba(37, 211, 102, 0.12)',
+                            border: '1px solid rgba(37, 211, 102, 0.35)',
+                            transition: 'all 0.2s ease',
+                          }}
+                        >
+                          💬 WhatsApp
+                        </a>
+                      </div>
+                    ) : (
+                      <div style={{ fontSize: '0.8rem', color: '#6b7a94' }}>📞 Contact details will be announced soon.</div>
+                    )}
                   </div>
                 </div>
               ))}

@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>SSREC | College Event Registration</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- ================= HEADER ================= -->
+
+  <header class="navbar">
+
+    <a class="brand" href="#">
+      <img src="logo.jpeg"" alt="SSREC Logo">
+      <span>SSREC</span>
+    </a>
+
+    <nav>
+      <a href="#home">Home</a>
+      <a href="#event">Event</a>
+      <a href="#register">Register</a>
+    </nav>
+
+  </header>
+
+
+  <!-- ================= MAIN ================= -->
+
+  <main>
+
+    <!-- ================= HERO ================= -->
+
+    <section class="hero" id="home">
+
+      <div class="hero-content">
+
+        <p class="eyebrow">
+          SRI SAI RANGANATHAN ENGINEERING COLLEGE
+        </p>
+
+        <h1>
+          College Event<br>
+          <span>Registration</span>
+        </h1>
+
+        <p class="hero-text">
+          Register your team and be part of the SSREC college event.
+        </p>
+
+        <a href="#register" class="hero-btn">
+          Register Now
+        </a>
+
+      </div>
+
+
+      <div class="hero-card" id="event">
+
+        <div class="event-icon">
+          ✦
+        </div>
+
+        <h2>
+          SSREC Event
+        </h2>
+
+        <p>
+          Technical & Non-Technical Events
+        </p>
+
+        <div class="mini-line"></div>
+
+        <p class="small">
+          Create • Collaborate • Showcase
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= REGISTRATION ================= -->
+
+    <section class="registration" id="register">
+
+      <div class="section-heading">
+
+        <p class="eyebrow">
+          JOIN THE EVENT
+        </p>
+
+        <h2>
+          Team Registration Form
+        </h2>
+
+        <p>
+          Complete the form one step at a time.
+        </p>
+
+      </div>
+
+
+      <form id="registrationForm" class="form-card" action="/api/register" method="POST" enctype="multipart/form-data">
+
+
+        <!-- ================= 01 TEAM DETAILS ================= -->
+
+        <div class="form-section">
+
+          <h3>
+            01 <span>Team Details</span>
+          </h3>
+
+
+          <div class="grid">
+
+
+            <!-- Team Name -->
+
+            <div class="field">
+
+              <label for="teamName">
+                Team Name *
+              </label>
+
+              <input
+                type="text"
+                id="teamName"
+                name="teamName"
+                placeholder="Enter team name"
+                required
+              >
+
+            </div>
+
+
+            <!-- Event Type -->
+
+            <div class="field">
+
+              <label for="eventType">
+                Event Type *
+              </label>
+
+              <select
+                id="eventType"
+                name="eventType"
+                required
+              >
+
+                <option value="">
+                  Select event type
+                </option>
+
+                <option value="technical">
+                  Technical Event
+                </option>
+
+                <option value="non-technical">
+                  Non-Technical Event
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <!-- Event -->
+
+            <div class="field event-field">
+
+              <label for="eventName">
+                Event *
+              </label>
+
+              <select
+                id="eventName"
+                name="eventName"
+                required
+                disabled
+              >
+
+                <option value="">
+                  Select event type first
+                </option>
+
+              </select>
+
+            </div>
+
+          </div>
+
+
+          <div
+            id="eventInfo"
+            class="event-info"
+            hidden
+          ></div>
+
+        </div>
+
+
+
+        <!-- ================= 02 COLLEGE DETAILS ================= -->
+
+        <div class="form-section">
+
+          <h3>
+            02 <span>College Details</span>
+          </h3>
+
+
+          <div class="grid">
+
+
+            <!-- College Name -->
+
+            <div class="field">
+
+              <label for="college">
+                College Name *
+              </label>
+
+              <input
+                type="text"
+                id="college"
+                name="college"
+                placeholder="Enter college name"
+                required
+              >
+
+            </div>
+
+
+            <!-- Department -->
+
+            <div class="field">
+
+              <label for="department">
+                Department *
+              </label>
+
+              <input
+                type="text"
+                id="department"
+                name="department"
+                placeholder="Enter department"
+                required
+              >
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- ================= 03 TEAM LEADER ================= -->
+
+        <div class="form-section">
+
+          <h3>
+            03 <span>Team Leader</span>
+          </h3>
+
+
+          <div class="grid">
+
+
+            <!-- Leader Name -->
+
+            <div class="field">
+
+              <label for="leader">
+                Full Name *
+              </label>
+
+              <input
+                type="text"
+                id="leader"
+                name="leader"
+                placeholder="Enter full name"
+                required
+              >
+
+            </div>
+
+
+            <!-- Leader Email -->
+
+            <div class="field">
+
+              <label for="leaderEmail">
+                Email *
+              </label>
+
+              <input
+                type="email"
+                id="leaderEmail"
+                name="leaderEmail"
+                placeholder="name@example.com"
+                required
+              >
+
+            </div>
+
+
+            <!-- Leader Mobile -->
+
+            <div class="field">
+
+              <label for="leaderPhone">
+                Mobile Number *
+              </label>
+
+              <input
+                type="tel"
+                id="leaderPhone"
+                name="leaderPhone"
+                inputmode="numeric"
+                pattern="[0-9]{10}"
+                placeholder="10-digit number"
+                required
+              >
+
+            </div>
+
+
+            <!-- Leader Department -->
+
+            <div class="field">
+
+              <label for="leaderDepartment">
+                Department *
+              </label>
+
+              <input
+                type="text"
+                id="leaderDepartment"
+                name="leaderDepartment"
+                placeholder="Enter department"
+                required
+              >
+
+            </div>
+
+
+            <!-- Leader Year -->
+
+            <div class="field">
+
+              <label for="leaderYear">
+                Year of Study *
+              </label>
+
+              <select
+                id="leaderYear"
+                name="leaderYear"
+                required
+              >
+
+                <option value="">
+                  Select Year
+                </option>
+
+                <option value="1st Year">
+                  1st Year
+                </option>
+
+                <option value="2nd Year">
+                  2nd Year
+                </option>
+
+                <option value="3rd Year">
+                  3rd Year
+                </option>
+
+                <option value="4th Year">
+                  4th Year
+                </option>
+
+              </select>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- ================= 04 MEMBER DETAILS ================= -->
+
+        <div class="form-section">
+
+          <h3>
+            04 <span>Member Details</span>
+          </h3>
+
+          <p class="section-note">
+            Exactly 4 members. Fill one member at a time.
+          </p>
+
+
+          <div id="membersContainer"></div>
+
+
+          <div class="member-buttons">
+
+            <button
+              type="button"
+              id="nextMember"
+              class="secondary-btn"
+            >
+              Next Member →
+            </button>
+
+            <span id="memberCount">
+              Member 1 of 4
+            </span>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- ================= 05 PROJECT DETAILS ================= -->
+
+        <div class="form-section">
+
+          <h3>
+            05 <span>Project / Idea</span>
+          </h3>
+
+
+          <!-- Project Title -->
+
+          <div class="field">
+
+            <label for="projectTitle">
+              Project / Idea Title *
+            </label>
+
+            <input
+              type="text"
+              id="projectTitle"
+              name="projectTitle"
+              placeholder="Enter project title"
+              required
+            >
+
+          </div>
+
+
+          <!-- Description -->
+
+          <div class="field">
+
+            <label for="description">
+              Short Description *
+            </label>
+
+            <textarea
+              id="description"
+              name="description"
+              placeholder="Briefly describe your project or idea"
+              required
+            ></textarea>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- ================= 06 PAYMENT ================= -->
+
+        <div class="form-section">
+
+          <h3>
+            06 <span>Payment Details</span>
+          </h3>
+
+
+          <div class="payment-card">
+
+
+            <div class="payment-info">
+
+              <p class="payment-label">
+                REGISTRATION FEE
+              </p>
+
+
+              <div class="amount">
+                ₹200
+              </div>
+
+
+              <h4>
+                Scan & Pay
+              </h4>
+
+
+              <p>
+                Pay exactly ₹200 using any UPI app.
+              </p>
+
+
+              <div class="upi-box">
+
+                <span>
+                  UPI ID
+                </span>
+
+                <strong>
+                  itzsiva01@oksbi
+                </strong>
+
+              </div>
+
+            </div>
+
+
+            <!-- QR -->
+
+            <div class="qr-wrap">
+
+              <img
+                src="payment-qr.jpeg""
+                alt="UPI QR Code"
+              >
+
+              <small>
+                Scan to pay
+              </small>
+
+            </div>
+
+          </div>
+
+
+
+          <div class="grid">
+
+
+            <!-- Transaction ID -->
+
+            <div class="field">
+
+              <label for="transactionId">
+                UPI Transaction / Reference ID *
+              </label>
+
+              <input
+                type="text"
+                id="transactionId"
+                name="transactionId"
+                placeholder="Enter transaction ID"
+                required
+              >
+
+            </div>
+
+
+            <!-- Screenshot -->
+
+            <div class="field">
+
+              <label for="paymentScreenshot">
+                Payment Screenshot *
+              </label>
+
+              <input
+                type="file"
+                id="paymentScreenshot"
+                name="paymentScreenshot"
+                accept="image/png,image/jpeg"
+                required
+              >
+
+              <small class="file-note">
+                JPG/PNG, maximum 5 MB.
+              </small>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- ================= SUBMIT ================= -->
+
+        <div class="form-bottom">
+
+
+          <label class="check">
+
+            <input
+              type="checkbox"
+              id="agree"
+              required
+            >
+
+            <span>
+              I confirm that the information provided is correct.
+            </span>
+
+          </label>
+
+
+          <button type="submit">
+
+            Submit Registration
+
+            <span>
+              →
+            </span>
+
+          </button>
+
+        </div>
+
+
+        <!-- Success Message -->
+
+        <p id="formStatus" class="form-status" role="status" aria-live="polite" hidden></p>
+
+        <p id="successMessage" class="success" hidden>
+          Registration submitted successfully!
+        </p>
+
+
+      </form>
+
+    </section>
+
+  </main>
+
+
+
+  <!-- ================= FOOTER ================= -->
+
+  <footer>
+
+    <img
+      src="logo.jpeg""
+      alt="SSREC"
+    >
+
+    <div>
+
+      <strong>
+        SSREC
+      </strong>
+
+      <br>
+
+      <span>
+        Sri Sai Ranganathan Engineering College
+      </span>
+
+      <br>
+
+      <small>
+        College Event Registration • © 2026 All Rights Reserved
+      </small>
+
+    </div>
+
+  </footer>
+
+
+
+  <!-- ================= JAVASCRIPT ================= -->
+
+  <script src="script.js"></script>
+
+</body>
+</html>

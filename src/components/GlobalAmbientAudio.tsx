@@ -5,7 +5,7 @@ let listenersInstalled = false;
 
 // This is the audio track supplied by the user for the website-wide ambience.
 const AUDIO_SRC = '/media/user-uploaded-wano-fest-audio.mp3';
-const AUDIO_VOLUME = 0.18;
+const AUDIO_VOLUME = 0.40;
 
 const ensureAudio = () => {
   if (typeof window === 'undefined') return null;

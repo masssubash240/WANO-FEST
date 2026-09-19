@@ -5,11 +5,12 @@ import { setGlobalAmbientMuted, startGlobalAmbientAudio } from './GlobalAmbientA
 interface HeroProps {
   onRegisterClick: () => void;
   onSelectCategory?: (cat: 'tech' | 'non-tech') => void;
+  onNavigatePitch?: () => void;
 }
 
-export const Hero: React.FC<HeroProps> = ({ onRegisterClick }) => {
-  // Countdown to October 24, 2026
-  const targetDate = new Date('2026-10-24T09:00:00').getTime();
+export const Hero: React.FC<HeroProps> = ({ onRegisterClick, onNavigatePitch }) => {
+  // Countdown to October 9, 2026
+  const targetDate = new Date('2026-10-09T09:00:00').getTime();
   const [timeLeft, setTimeLeft] = useState({
     days: 0, hours: 0, minutes: 0, seconds: 0
   });
@@ -76,7 +77,7 @@ export const Hero: React.FC<HeroProps> = ({ onRegisterClick }) => {
       style={{
         position: 'relative',
         minHeight: '100vh',
-        height: '100vh',
+        height: 'auto',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
@@ -227,279 +228,457 @@ export const Hero: React.FC<HeroProps> = ({ onRegisterClick }) => {
           LAYER 6: UI & TYPOGRAPHY SYSTEM
           ══════════════════════════════════════════════ */}
       <div
+        className="hero-main-grid"
         style={{
           position: 'relative',
           zIndex: 10,
-          maxWidth: '1320px',
+          maxWidth: '1380px',
           width: '100%',
           margin: '0 auto',
-          padding: '0 32px',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          height: '100%',
+          padding: '80px 24px 30px 24px',
+          display: 'grid',
+          gridTemplateColumns: 'minmax(0, 1.25fr) minmax(0, 0.85fr)',
+          alignItems: 'center',
+          gap: '32px',
         }}
       >
-        {/* Top Tagline / Category Badge */}
-        <div
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '12px',
-            marginBottom: '20px',
-            alignSelf: 'flex-start',
-            background: 'linear-gradient(90deg, rgba(8, 12, 24, 0.92) 0%, rgba(18, 24, 40, 0.8) 100%)',
-            border: '1px solid rgba(217, 4, 41, 0.5)',
-            borderRadius: '30px',
-            padding: '7px 20px',
-            boxShadow: '0 0 20px rgba(217, 4, 41, 0.3), inset 0 0 10px rgba(217, 4, 41, 0.15)',
-            backdropFilter: 'blur(12px)',
-          }}
-        >
-          <div className="wano-hanko-seal" style={{ width: '22px', height: '22px', fontSize: '0.75rem', border: '1.5px solid #d90429' }}>
-            和
-          </div>
-          <span
-            style={{
-              fontSize: '0.76rem',
-              fontWeight: 800,
-              letterSpacing: '0.24em',
-              color: '#ffffff',
-              textTransform: 'uppercase',
-            }}
-          >
-            ENTER THE GRAND FESTIVAL <span style={{ color: '#00e5ff' }}>•</span> 2026
-          </span>
-          <span
-            style={{
-              fontSize: '0.72rem',
-              color: '#ffb703',
-              fontWeight: 800,
-              borderLeft: '1px solid rgba(255,255,255,0.2)',
-              paddingLeft: '10px',
-            }}
-          >
-            OCT 24–26
-          </span>
-        </div>
-
-        {/* ─── HERO GIGANTIC DISPLAY HEADLINE WITH VELOCITY SKEW ─── */}
-        <div
-          style={{
-            marginBottom: '20px',
-            transform: `translateX(${headlineX}px) skewX(${headlineSkew}deg)`,
-            transformOrigin: 'left center',
-            transition: 'transform 0.1s cubic-bezier(0.16, 1, 0.3, 1)',
-            willChange: 'transform',
-          }}
-        >
-          <img
-            src="/images/wano_fest_overall_logo.png"
-            alt="CybiTradic Wano Fest"
-            style={{
-              width: 'min(100%, 760px)',
-              maxHeight: '230px',
-              objectFit: 'contain',
-              objectPosition: 'left center',
-              mixBlendMode: 'normal',
-              filter: 'drop-shadow(0 12px 30px rgba(0,0,0,0.75)) drop-shadow(0 0 24px rgba(0, 229, 255, 0.24))',
-            }}
-          />
-        </div>
-
-
-        {/* Supporting Editorial Paragraph */}
-        <p
-          style={{
-            fontSize: 'clamp(0.95rem, 1.6vw, 1.15rem)',
-            color: 'rgba(230, 238, 252, 0.88)',
-            lineHeight: 1.75,
-            maxWidth: '560px',
-            marginBottom: '32px',
-            textShadow: '0 2px 10px rgba(0,0,0,0.9)',
-          }}
-        >
-          Step into an anime cinematic universe where samurai spirit meets next-gen technology.
-          25+ battles, CTFs, hackathons, and esports across the Grand Line.
-        </p>
-
-        {/* ─── CTA ROW: EXPLORE EVENTS + JOIN THE FEST ─── */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '16px',
-            flexWrap: 'wrap',
-            marginBottom: '36px',
-          }}
-        >
-          {/* Primary CTA: EXPLORE EVENTS */}
-          <a
-            href="#world-of-wano"
-            data-cursor="expand"
-            data-cursor-text="EXPLORE"
-            className="btn-samurai-primary"
-            style={{
-              padding: '16px 36px',
-              fontSize: '1rem',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '12px',
-            }}
-          >
-            <span>EXPLORE EVENTS</span>
-            <span style={{ fontSize: '1.2rem' }}>➔</span>
-          </a>
-
-          {/* Secondary CTA: JOIN THE FEST */}
-          <button
-            onClick={onRegisterClick}
-            data-cursor="register"
-            data-cursor-text="JOIN"
-            className="btn-cyber-primary"
-            style={{
-              padding: '15px 32px',
-              fontSize: '0.95rem',
-              background: 'linear-gradient(135deg, rgba(14, 24, 48, 0.9) 0%, rgba(20, 36, 72, 0.9) 100%)',
-              border: '1.5px solid #00e5ff',
-            }}
-          >
-            <span>JOIN THE FEST</span>
-            <span>⚡</span>
-          </button>
-
-          {/* Watch Trailer Button */}
-          <button
-            onClick={() => setIsTrailerModalOpen(true)}
-            data-cursor="view"
-            data-cursor-text="WATCH"
+        {/* ─── LEFT COLUMN: HERO CONTENT & ACTIONS ─── */}
+        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          {/* Top Tagline / Category Badge */}
+          <div
             style={{
               display: 'inline-flex',
               alignItems: 'center',
               gap: '10px',
-              padding: '14px 22px',
-              background: 'rgba(255, 255, 255, 0.06)',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
+              marginBottom: '14px',
+              alignSelf: 'flex-start',
+              background: 'linear-gradient(90deg, rgba(8, 12, 24, 0.92) 0%, rgba(18, 24, 40, 0.8) 100%)',
+              border: '1px solid rgba(217, 4, 41, 0.5)',
               borderRadius: '30px',
-              color: '#ffffff',
-              fontFamily: 'var(--font-body)',
-              fontWeight: 700,
-              fontSize: '0.88rem',
-              cursor: 'pointer',
-              backdropFilter: 'blur(8px)',
-              transition: 'all 0.25s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = '#ffb703';
-              e.currentTarget.style.boxShadow = '0 0 15px rgba(255, 183, 3, 0.4)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-              e.currentTarget.style.boxShadow = 'none';
+              padding: '5px 16px',
+              boxShadow: '0 0 16px rgba(217, 4, 41, 0.25), inset 0 0 8px rgba(217, 4, 41, 0.15)',
+              backdropFilter: 'blur(12px)',
             }}
           >
-            <span style={{ fontSize: '1.1rem', color: '#ffb703' }}>▶</span>
-            <span>TRAILER</span>
-          </button>
+            <div className="wano-hanko-seal" style={{ width: '20px', height: '20px', fontSize: '0.7rem', border: '1.5px solid #d90429' }}>
+              和
+            </div>
+            <span
+              style={{
+                fontSize: '0.72rem',
+                fontWeight: 800,
+                letterSpacing: '0.2em',
+                color: '#ffffff',
+                textTransform: 'uppercase',
+              }}
+            >
+              ENTER THE GRAND FESTIVAL <span style={{ color: '#00e5ff' }}>•</span> 2026
+            </span>
+            <span
+              style={{
+                fontSize: '0.7rem',
+                color: '#ffb703',
+                fontWeight: 800,
+                borderLeft: '1px solid rgba(255,255,255,0.2)',
+                paddingLeft: '8px',
+              }}
+            >
+              OCT 9
+            </span>
+          </div>
 
-          {/* Audio Mute/Unmute Toggle */}
-          <button
-            onClick={() => {
-              const nextMuted = !isBgMuted;
-              setIsBgMuted(nextMuted);
-              setGlobalAmbientMuted(nextMuted);
-              if (!nextMuted) void startGlobalAmbientAudio();
+          {/* ─── HERO GIGANTIC DISPLAY HEADLINE WITH VELOCITY SKEW ─── */}
+          <div
+            style={{
+              marginBottom: '14px',
+              transform: `translateX(${headlineX}px) skewX(${headlineSkew}deg)`,
+              transformOrigin: 'left center',
+              transition: 'transform 0.1s cubic-bezier(0.16, 1, 0.3, 1)',
+              willChange: 'transform',
             }}
-            data-cursor="button"
-            data-cursor-text={isBgMuted ? "UNMUTE" : "MUTE"}
+          >
+            <img
+              src="/images/wano_fest_overall_logo.png"
+              alt="CybiTradic Wano Fest"
+              style={{
+                width: 'min(100%, 640px)',
+                maxHeight: '190px',
+                objectFit: 'contain',
+                objectPosition: 'left center',
+                mixBlendMode: 'normal',
+                filter: 'drop-shadow(0 10px 25px rgba(0,0,0,0.75)) drop-shadow(0 0 20px rgba(0, 229, 255, 0.2))',
+              }}
+            />
+          </div>
+
+          {/* Supporting Editorial Paragraph */}
+          <p
+            style={{
+              fontSize: 'clamp(0.88rem, 1.15vw, 1.05rem)',
+              color: 'rgba(230, 238, 252, 0.88)',
+              lineHeight: 1.6,
+              maxWidth: '520px',
+              marginBottom: '20px',
+              textShadow: '0 2px 8px rgba(0,0,0,0.9)',
+            }}
+          >
+            Step into an anime cinematic universe where samurai spirit meets next-gen technology.
+            25+ battles, CTFs, hackathons, and esports across the Grand Line.
+          </p>
+
+          {/* ─── CTA ROW: EXPLORE EVENTS + JOIN THE FEST ─── */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              flexWrap: 'wrap',
+              marginBottom: '22px',
+            }}
+          >
+            {/* Primary CTA: EXPLORE EVENTS */}
+            <a
+              href="#world-of-wano"
+              data-cursor="expand"
+              data-cursor-text="EXPLORE"
+              className="btn-samurai-primary"
+              style={{
+                padding: '12px 26px',
+                fontSize: '0.92rem',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '10px',
+              }}
+            >
+              <span>EXPLORE EVENTS</span>
+              <span style={{ fontSize: '1.1rem' }}>➔</span>
+            </a>
+
+            {/* Secondary CTA: JOIN THE FEST */}
+            <button
+              onClick={onRegisterClick}
+              data-cursor="register"
+              data-cursor-text="JOIN"
+              className="btn-cyber-primary"
+              style={{
+                padding: '12px 24px',
+                fontSize: '0.9rem',
+                background: 'linear-gradient(135deg, rgba(14, 24, 48, 0.9) 0%, rgba(20, 36, 72, 0.9) 100%)',
+                border: '1.5px solid #00e5ff',
+              }}
+            >
+              <span>JOIN THE FEST</span>
+              <span>⚡</span>
+            </button>
+
+            {/* Special CTA: PITCH PERFECT '26 */}
+            <button
+              onClick={onNavigatePitch}
+              data-cursor="expand"
+              data-cursor-text="PITCH"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '11px 20px',
+                borderRadius: '30px',
+                background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #2563eb 100%)',
+                border: '1.5px solid #60a5fa',
+                color: '#ffffff',
+                fontFamily: 'var(--font-body)',
+                fontWeight: 800,
+                fontSize: '0.86rem',
+                letterSpacing: '0.03em',
+                cursor: 'pointer',
+                boxShadow: '0 0 20px rgba(37, 99, 235, 0.45)',
+                transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-2px) scale(1.03)';
+                e.currentTarget.style.borderColor = '#fbbf24';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                e.currentTarget.style.borderColor = '#60a5fa';
+              }}
+            >
+              <span>🚀</span>
+              <span>PITCH PERFECT ’26</span>
+              <span
+                style={{
+                  fontSize: '0.62rem',
+                  fontWeight: 900,
+                  padding: '2px 7px',
+                  borderRadius: '10px',
+                  background: 'linear-gradient(135deg, #fbbf24, #f59e0b)',
+                  color: '#0a0f24',
+                }}
+              >
+                ₹20K
+              </span>
+            </button>
+
+            {/* Watch Trailer Button */}
+            <button
+              onClick={() => setIsTrailerModalOpen(true)}
+              data-cursor="view"
+              data-cursor-text="WATCH"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '11px 18px',
+                background: 'rgba(255, 255, 255, 0.06)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                borderRadius: '30px',
+                color: '#ffffff',
+                fontFamily: 'var(--font-body)',
+                fontWeight: 700,
+                fontSize: '0.82rem',
+                cursor: 'pointer',
+                backdropFilter: 'blur(8px)',
+                transition: 'all 0.25s ease',
+              }}
+            >
+              <span style={{ fontSize: '1rem', color: '#ffb703' }}>▶</span>
+              <span>TRAILER</span>
+            </button>
+
+            {/* Audio Mute/Unmute Toggle */}
+            <button
+              onClick={() => {
+                const nextMuted = !isBgMuted;
+                setIsBgMuted(nextMuted);
+                setGlobalAmbientMuted(nextMuted);
+                if (!nextMuted) void startGlobalAmbientAudio();
+              }}
+              data-cursor="button"
+              data-cursor-text={isBgMuted ? "UNMUTE" : "MUTE"}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '11px 16px',
+                background: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                borderRadius: '30px',
+                color: '#ffffff',
+                fontFamily: 'var(--font-body)',
+                fontWeight: 700,
+                fontSize: '0.8rem',
+                cursor: 'pointer',
+                backdropFilter: 'blur(8px)',
+              }}
+            >
+              <span>{isBgMuted ? '🔇' : '🔊'}</span>
+              <span>{isBgMuted ? 'SOUND OFF' : 'SOUND ON'}</span>
+            </button>
+
+            {/* Background Video Scene Switcher */}
+            <button
+              onClick={() => setBgVideoSrc(bgVideoSrc === 'video2' ? 'intro' : 'video2')}
+              data-cursor="button"
+              data-cursor-text="SCENE"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '11px 16px',
+                background: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid rgba(0, 229, 255, 0.3)',
+                borderRadius: '30px',
+                color: '#00e5ff',
+                fontFamily: 'var(--font-body)',
+                fontWeight: 700,
+                fontSize: '0.8rem',
+                cursor: 'pointer',
+                backdropFilter: 'blur(8px)',
+              }}
+            >
+              <span>🎬</span>
+              <span>SCENE {bgVideoSrc === 'video2' ? '1' : '2'}</span>
+            </button>
+          </div>
+
+          {/* ─── COUNTDOWN TIMER BANNER ─── */}
+          <div
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '8px',
-              padding: '14px 18px',
-              background: 'rgba(255, 255, 255, 0.05)',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
-              borderRadius: '30px',
-              color: '#ffffff',
-              fontFamily: 'var(--font-body)',
-              fontWeight: 700,
-              fontSize: '0.82rem',
-              cursor: 'pointer',
-              backdropFilter: 'blur(8px)',
-              transition: 'all 0.25s ease',
+              gap: '14px',
+              background: 'rgba(8, 12, 22, 0.85)',
+              border: '1px solid rgba(0, 229, 255, 0.25)',
+              borderRadius: '14px',
+              padding: '8px 18px',
+              backdropFilter: 'blur(12px)',
+              alignSelf: 'flex-start',
             }}
           >
-            <span>{isBgMuted ? '🔇' : '🔊'}</span>
-            <span>{isBgMuted ? 'SOUND OFF' : 'SOUND ON'}</span>
-          </button>
-
-          {/* Background Video Scene Switcher */}
-          <button
-            onClick={() => setBgVideoSrc(bgVideoSrc === 'video2' ? 'intro' : 'video2')}
-            data-cursor="button"
-            data-cursor-text="SCENE"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '14px 18px',
-              background: 'rgba(255, 255, 255, 0.05)',
-              border: '1px solid rgba(0, 229, 255, 0.3)',
-              borderRadius: '30px',
-              color: '#00e5ff',
-              fontFamily: 'var(--font-body)',
-              fontWeight: 700,
-              fontSize: '0.82rem',
-              cursor: 'pointer',
-              backdropFilter: 'blur(8px)',
-              transition: 'all 0.25s ease',
-            }}
-          >
-            <span>🎬</span>
-            <span>SCENE {bgVideoSrc === 'video2' ? '1' : '2'}</span>
-          </button>
+            <span style={{ fontSize: '0.68rem', fontWeight: 800, color: 'var(--text-muted)', letterSpacing: '0.12em' }}>
+              COUNTDOWN:
+            </span>
+            <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+              {[
+                { val: timeLeft.days, unit: 'D' },
+                { val: timeLeft.hours, unit: 'H' },
+                { val: timeLeft.minutes, unit: 'M' },
+                { val: timeLeft.seconds, unit: 'S' },
+              ].map((item, idx) => (
+                <div key={idx} style={{ display: 'flex', alignItems: 'baseline', gap: '2px' }}>
+                  <span
+                    style={{
+                      fontFamily: 'var(--font-title)',
+                      fontSize: '1rem',
+                      fontWeight: 900,
+                      color: '#00e5ff',
+                    }}
+                  >
+                    {String(item.val).padStart(2, '0')}
+                  </span>
+                  <span style={{ fontSize: '0.62rem', color: '#8e9bb4', fontWeight: 700 }}>
+                    {item.unit}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
-        {/* ─── COUNTDOWN TIMER BANNER ─── */}
+        {/* ─── RIGHT COLUMN: FEATURED PITCH PERFECT '26 BANNER POSTER ─── */}
         <div
+          className="hero-banner-container"
           style={{
-            display: 'inline-flex',
+            display: 'flex',
+            justifyContent: 'center',
             alignItems: 'center',
-            gap: '16px',
-            background: 'rgba(8, 12, 22, 0.85)',
-            border: '1px solid rgba(0, 229, 255, 0.25)',
-            borderRadius: '16px',
-            padding: '10px 20px',
-            backdropFilter: 'blur(12px)',
-            alignSelf: 'flex-start',
+            position: 'relative',
           }}
         >
-          <span style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--text-muted)', letterSpacing: '0.15em' }}>
-            COUNTDOWN TO DAWN:
-          </span>
-          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-            {[
-              { val: timeLeft.days, unit: 'D' },
-              { val: timeLeft.hours, unit: 'H' },
-              { val: timeLeft.minutes, unit: 'M' },
-              { val: timeLeft.seconds, unit: 'S' },
-            ].map((item, idx) => (
-              <div key={idx} style={{ display: 'flex', alignItems: 'baseline', gap: '2px' }}>
-                <span
+          <div
+            onClick={onNavigatePitch}
+            data-cursor="expand"
+            data-cursor-text="PITCH '26"
+            className="pitch-poster-hover-card"
+            style={{
+              position: 'relative',
+              borderRadius: '22px',
+              padding: '8px',
+              background: 'linear-gradient(135deg, rgba(91, 61, 245, 0.45) 0%, rgba(0, 229, 255, 0.3) 50%, rgba(245, 158, 11, 0.35) 100%)',
+              border: '2px solid rgba(0, 229, 255, 0.45)',
+              boxShadow: '0 20px 50px rgba(0, 0, 0, 0.85), 0 0 35px rgba(91, 61, 245, 0.35), 0 0 20px rgba(0, 229, 255, 0.25)',
+              cursor: 'pointer',
+              overflow: 'hidden',
+              transition: 'all 0.35s cubic-bezier(0.16, 1, 0.3, 1)',
+              maxWidth: '410px',
+              width: '100%',
+            }}
+          >
+            {/* Top Badge Strip */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '6px 12px 8px 12px',
+              }}
+            >
+              <span
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  fontSize: '0.7rem',
+                  fontWeight: 900,
+                  letterSpacing: '0.12em',
+                  color: '#00e5ff',
+                  textTransform: 'uppercase',
+                }}
+              >
+                <span style={{ width: '7px', height: '7px', borderRadius: '50%', backgroundColor: '#00e5ff', boxShadow: '0 0 8px #00e5ff' }} />
+                FLAGSHIP INNOVATION EVENT
+              </span>
+              <span
+                style={{
+                  fontSize: '0.7rem',
+                  fontWeight: 900,
+                  color: '#fbbf24',
+                  background: 'rgba(245, 158, 11, 0.15)',
+                  border: '1px solid rgba(245, 158, 11, 0.4)',
+                  borderRadius: '20px',
+                  padding: '2px 9px',
+                }}
+              >
+                ₹20,000 PRIZE
+              </span>
+            </div>
+
+            {/* Poster Image Container */}
+            <div
+              style={{
+                position: 'relative',
+                borderRadius: '16px',
+                overflow: 'hidden',
+                backgroundColor: '#0a0f1d',
+              }}
+            >
+              <img
+                src="/images/pitch-perfect-poster.jpg"
+                alt="Pitch Perfect '26 Official Event Banner - Sri Sai Ranganathan Engineering College"
+                className="poster-img-zoom"
+                style={{
+                  width: '100%',
+                  height: 'auto',
+                  maxHeight: '430px',
+                  objectFit: 'contain',
+                  display: 'block',
+                  transition: 'transform 0.4s ease',
+                }}
+              />
+
+              {/* Bottom Quick Action Overlay */}
+              <div
+                style={{
+                  position: 'absolute',
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  padding: '16px 14px 12px 14px',
+                  background: 'linear-gradient(180deg, transparent 0%, rgba(4, 5, 8, 0.95) 85%)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '8px',
+                }}
+              >
+                <div>
+                  <div style={{ fontSize: '0.9rem', fontWeight: 900, color: '#ffffff', letterSpacing: '0.02em' }}>
+                    PITCH PERFECT ’26
+                  </div>
+                  <div style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: 600 }}>
+                    09 Oct 2026 • ₹200 / head
+                  </div>
+                </div>
+
+                <div
                   style={{
-                    fontFamily: 'var(--font-title)',
-                    fontSize: '1.1rem',
-                    fontWeight: 900,
-                    color: '#00e5ff',
+                    padding: '7px 14px',
+                    borderRadius: '30px',
+                    background: 'linear-gradient(135deg, #5B3DF5, #7C4DFF)',
+                    color: '#ffffff',
+                    fontSize: '0.76rem',
+                    fontWeight: 800,
+                    boxShadow: '0 4px 14px rgba(91, 61, 245, 0.6)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    whiteSpace: 'nowrap',
                   }}
                 >
-                  {String(item.val).padStart(2, '0')}
-                </span>
-                <span style={{ fontSize: '0.65rem', color: '#8e9bb4', fontWeight: 700 }}>
-                  {item.unit}
-                </span>
+                  <span>VIEW & REGISTER</span>
+                  <span>↗</span>
+                </div>
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </div>

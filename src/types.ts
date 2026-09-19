@@ -20,6 +20,7 @@ export interface EventItem {
   eligibility?: string;
   icon?: string;
   rulesSummary?: string[];
+  phone?: string;
   registrationLink?: string;
 }
 

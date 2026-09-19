@@ -38,7 +38,7 @@ export const CustomCursor: React.FC = () => {
       if (!target) return;
 
       const cardEl = target.closest('[data-cursor="card"], .event-card, [data-event-card]');
-      const registerEl = target.closest('[data-cursor="register"], .btn-register, button:has-text, a[href*="ticket"]');
+      const registerEl = target.closest('[data-cursor="register"], .btn-register, a[href*="ticket"]');
       const imageEl = target.closest('[data-cursor="view"], .card-image-wrap, img');
       const btnEl = target.closest('button, a, [role="button"], input[type="submit"]');
 

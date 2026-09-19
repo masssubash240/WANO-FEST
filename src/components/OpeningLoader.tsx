@@ -8,6 +8,7 @@ interface OpeningLoaderProps {
 /** Full-screen opening sequence. Existing site UI stays untouched underneath. */
 export const OpeningLoader: React.FC<OpeningLoaderProps> = ({ onComplete }) => {
   const completedRef = useRef(false);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   const [soundUnlocked, setSoundUnlocked] = useState(false);
 
   const unlockSound = () => {
@@ -21,9 +22,16 @@ export const OpeningLoader: React.FC<OpeningLoaderProps> = ({ onComplete }) => {
     onComplete();
   };
 
+  const apply2xSpeed = () => {
+    if (videoRef.current) {
+      videoRef.current.playbackRate = 2.0;
+    }
+  };
+
   useEffect(() => {
-    // Safety fallback in case the browser blocks video playback or does not emit ended.
-    const fallback = window.setTimeout(complete, 12000);
+    apply2xSpeed();
+    // Safety fallback in case the browser blocks video playback or does not emit ended (reduced for 2x speed)
+    const fallback = window.setTimeout(complete, 7000);
     return () => window.clearTimeout(fallback);
   }, []);
 
@@ -42,12 +50,16 @@ export const OpeningLoader: React.FC<OpeningLoaderProps> = ({ onComplete }) => {
       }}
     >
       <video
+        ref={videoRef}
         autoPlay
         muted
         playsInline
+        onLoadedMetadata={apply2xSpeed}
+        onPlay={apply2xSpeed}
+        onCanPlay={apply2xSpeed}
         onEnded={complete}
         onError={complete}
-      onClick={unlockSound}
+        onClick={unlockSound}
         style={{
           position: 'absolute',
           inset: 0,

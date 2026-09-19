@@ -1,0 +1,15 @@
+{
+  "name": "ssrec-excel-registration",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SSREC college event registration form with Excel storage",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "multer": "^2.0.2",
+    "xlsx": "^0.18.5"
+  }
+}

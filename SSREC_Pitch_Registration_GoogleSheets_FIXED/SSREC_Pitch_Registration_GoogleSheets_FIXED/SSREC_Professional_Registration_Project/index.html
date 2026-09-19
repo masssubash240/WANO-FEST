@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>SSREC Event Registration</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #080b12;
+      --card: rgba(18, 23, 35, 0.88);
+      --card-light: #151b2a;
+      --border: rgba(255,255,255,0.09);
+      --text: #f5f7fb;
+      --muted: #9ca7bb;
+      --primary: #7c5cff;
+      --primary2: #00d4ff;
+      --success: #25d695;
+      --danger: #ff5c7a;
+    }
+
+    body {
+      font-family: Inter, Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(124,92,255,.20), transparent 30%),
+        radial-gradient(circle at 90% 20%, rgba(0,212,255,.14), transparent 28%),
+        radial-gradient(circle at 50% 100%, rgba(124,92,255,.12), transparent 35%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+      background-size: 45px 45px;
+      mask-image: linear-gradient(to bottom, black, transparent);
+    }
+
+    .container {
+      width: min(1100px, calc(100% - 32px));
+      margin: auto;
+    }
+
+    /* HEADER */
+    header {
+      padding: 28px 0 15px;
+      animation: fadeDown .7s ease;
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo {
+      width: 62px;
+      height: 62px;
+      object-fit: contain;
+      background: #fff;
+      border-radius: 15px;
+      padding: 6px;
+      box-shadow: 0 8px 30px rgba(0,0,0,.3);
+    }
+
+    .brand h1 {
+      font-size: 21px;
+      letter-spacing: .4px;
+    }
+
+    .brand p {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 2px;
+    }
+
+    .badge {
+      padding: 9px 15px;
+      border: 1px solid rgba(124,92,255,.35);
+      border-radius: 999px;
+      background: rgba(124,92,255,.1);
+      color: #cfc5ff;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .5px;
+    }
+
+    /* HERO */
+    .hero {
+      padding: 55px 0 35px;
+      text-align: center;
+      animation: fadeUp .8s ease;
+    }
+
+    .hero-tag {
+      display: inline-block;
+      padding: 7px 13px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,212,255,.25);
+      background: rgba(0,212,255,.07);
+      color: #7ce8ff;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      margin-bottom: 18px;
+    }
+
+    .hero h2 {
+      font-size: clamp(34px, 6vw, 64px);
+      line-height: 1.05;
+      letter-spacing: -2px;
+      margin-bottom: 15px;
+      background: linear-gradient(100deg, #fff, #bcb1ff, #70e6ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      color: var(--muted);
+      max-width: 680px;
+      margin: auto;
+      font-size: 15px;
+    }
+
+    /* FORM */
+    .form-wrapper {
+      padding: 10px 0 70px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .section {
+      position: relative;
+      background: var(--card);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: 0 18px 60px rgba(0,0,0,.22);
+      animation: fadeUp .7s ease both;
+      overflow: hidden;
+    }
+
+    .section::before {
+      content: "";
+      position: absolute;
+      width: 180px;
+      height: 180px;
+      right: -100px;
+      top: -100px;
+      border-radius: 50%;
+      background: rgba(124,92,255,.08);
+      pointer-events: none;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .section-number {
+      width: 38px;
+      height: 38px;
+      flex: 0 0 38px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--primary), #5540d9);
+      font-size: 13px;
+      font-weight: 800;
+      box-shadow: 0 8px 20px rgba(124,92,255,.25);
+    }
+
+    .section-header h3 {
+      font-size: 18px;
+      margin-bottom: 3px;
+    }
+
+    .section-header p {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #dce2ef;
+      letter-spacing: .3px;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,.09);
+      background: rgba(5,8,15,.65);
+      color: var(--text);
+      border-radius: 13px;
+      padding: 13px 14px;
+      outline: none;
+      font-size: 14px;
+      transition: .25s ease;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: #667085;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: rgba(124,92,255,.8);
+      box-shadow: 0 0 0 4px rgba(124,92,255,.09);
+      transform: translateY(-1px);
+    }
+
+    textarea {
+      min-height: 125px;
+      resize: vertical;
+    }
+
+    select option {
+      background: #111725;
+      color: #fff;
+    }
+
+    /* PITCH */
+    .pitch-options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .pitch-option {
+      position: relative;
+    }
+
+    .pitch-option input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .pitch-label {
+      display: block;
+      padding: 19px;
+      border: 1px solid rgba(255,255,255,.09);
+      background: rgba(5,8,15,.55);
+      border-radius: 16px;
+      cursor: pointer;
+      transition: .25s ease;
+    }
+
+    .pitch-label:hover {
+      border-color: rgba(124,92,255,.45);
+      transform: translateY(-2px);
+    }
+
+    .pitch-option input:checked + .pitch-label {
+      border-color: var(--primary);
+      background: rgba(124,92,255,.11);
+      box-shadow: 0 0 0 3px rgba(124,92,255,.08);
+    }
+
+    .pitch-label strong {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .pitch-label span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    /* MEMBERS */
+    .member-card {
+      padding: 20px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(5,8,15,.38);
+      border-radius: 18px;
+      margin-bottom: 15px;
+      transition: .3s ease;
+    }
+
+    .member-card:hover {
+      border-color: rgba(124,92,255,.28);
+      transform: translateY(-2px);
+    }
+
+    .member-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 18px;
+    }
+
+    .member-number {
+      display: inline-block;
+      font-size: 10px;
+      color: #9d91ff;
+      letter-spacing: 1.3px;
+      font-weight: 800;
+      margin-bottom: 2px;
+    }
+
+    .member-head h4 {
+      font-size: 15px;
+    }
+
+    .required-badge {
+      font-size: 10px;
+      color: #83eac3;
+      background: rgba(37,214,149,.08);
+      border: 1px solid rgba(37,214,149,.2);
+      border-radius: 999px;
+      padding: 5px 9px;
+    }
+
+    .member-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 8px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(255,255,255,.06);
+    }
+
+    .member-count {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    /* PAYMENT */
+    .payment-box {
+      display: grid;
+      grid-template-columns: 190px 1fr;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .qr-box {
+      background: #fff;
+      padding: 12px;
+      border-radius: 18px;
+      width: 180px;
+      height: 180px;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 15px 35px rgba(0,0,0,.25);
+    }
+
+    .qr-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+
+    .payment-info {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .fee {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 25px;
+      font-weight: 800;
+    }
+
+    .fee small {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .upi {
+      padding: 13px 15px;
+      background: rgba(124,92,255,.08);
+      border: 1px solid rgba(124,92,255,.18);
+      border-radius: 13px;
+      color: #d7d0ff;
+      font-size: 13px;
+      word-break: break-all;
+    }
+
+    .payment-note {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .file-input {
+      padding: 10px;
+    }
+
+    /* BUTTON */
+    .submit-area {
+      text-align: center;
+      padding: 5px 0 20px;
+    }
+
+    .submit-btn,
+    .next-btn {
+      border: none;
+      cursor: pointer;
+      border-radius: 14px;
+      color: #fff;
+      font-weight: 800;
+      letter-spacing: .3px;
+      transition: .25s ease;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 16px 22px;
+      font-size: 14px;
+      background: linear-gradient(100deg, var(--primary), #5943e9, #00a9d1);
+      box-shadow: 0 14px 35px rgba(91,72,224,.28);
+    }
+
+    .next-btn {
+      padding: 11px 17px;
+      background: rgba(124,92,255,.13);
+      border: 1px solid rgba(124,92,255,.3);
+      font-size: 12px;
+    }
+
+    .submit-btn:hover,
+    .next-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 40px rgba(91,72,224,.34);
+    }
+
+    .next-btn:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+    }
+
+    .secure-note {
+      margin-top: 10px;
+      color: #667085;
+      font-size: 11px;
+    }
+
+    /* SUCCESS */
+    .success {
+      padding: 22px;
+      border-radius: 18px;
+      border: 1px solid rgba(37,214,149,.25);
+      background: rgba(37,214,149,.07);
+      text-align: center;
+      margin-bottom: 20px;
+      animation: pop .45s ease;
+    }
+
+    .success-icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 10px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: rgba(37,214,149,.14);
+      color: var(--success);
+      font-size: 22px;
+    }
+
+    .success h3 {
+      color: #baf5dc;
+      margin-bottom: 4px;
+    }
+
+    .success p {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    /* FOOTER */
+    footer {
+      padding: 25px 0 35px;
+      border-top: 1px solid rgba(255,255,255,.06);
+      color: #697386;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    footer strong {
+      color: #aeb7c8;
+    }
+
+    /* MODAL */
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.72);
+      backdrop-filter: blur(8px);
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      z-index: 999;
+      animation: fade .25s ease;
+    }
+
+    .modal-card {
+      width: min(430px, 100%);
+      padding: 32px;
+      border-radius: 24px;
+      background: #111725;
+      border: 1px solid rgba(255,255,255,.1);
+      text-align: center;
+      box-shadow: 0 30px 80px rgba(0,0,0,.45);
+      animation: pop .35s ease;
+    }
+
+    .modal-icon {
+      width: 62px;
+      height: 62px;
+      margin: 0 auto 16px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: rgba(37,214,149,.12);
+      color: var(--success);
+      font-size: 30px;
+    }
+
+    .modal-card h2 {
+      margin-bottom: 8px;
+    }
+
+    .modal-card p {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 20px;
+    }
+
+    .close-btn {
+      border: 0;
+      background: var(--primary);
+      color: white;
+      padding: 11px 25px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeDown {
+      from {
+        opacity: 0;
+        transform: translateY(-15px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes pop {
+      from {
+        opacity: 0;
+        transform: scale(.94);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes fade {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @media (max-width: 700px) {
+      .container {
+        width: min(100% - 20px, 1100px);
+      }
+
+      header {
+        padding-top: 18px;
+      }
+
+      .header-inner {
+        align-items: flex-start;
+      }
+
+      .badge {
+        display: none;
+      }
+
+      .logo {
+        width: 52px;
+        height: 52px;
+      }
+
+      .brand h1 {
+        font-size: 17px;
+      }
+
+      .brand p {
+        font-size: 11px;
+      }
+
+      .hero {
+        padding: 40px 0 25px;
+      }
+
+      .hero h2 {
+        font-size: 39px;
+      }
+
+      .section {
+        padding: 20px;
+        border-radius: 19px;
+      }
+
+      .grid,
+      .pitch-options {
+        grid-template-columns: 1fr;
+      }
+
+      .field.full {
+        grid-column: auto;
+      }
+
+      .payment-box {
+        grid-template-columns: 1fr;
+      }
+
+      .qr-box {
+        width: 160px;
+        height: 160px;
+        margin: auto;
+      }
+
+      .payment-info {
+        text-align: center;
+      }
+
+      .fee {
+        justify-content: center;
+      }
+
+      .member-head {
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="container header-inner">
+
+      <div class="brand">
+        <img src="logo.jpeg" alt="SSREC Logo" class="logo">
+
+        <div>
+          <h1>Sri Sai Ranganathan Engineering College</h1>
+          <p>SSREC • College Event Registration</p>
+        </div>
+      </div>
+
+      <div class="badge">
+        SSREC 2026
+      </div>
+
+    </div>
+  </header>
+
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container">
+
+      <div class="hero-tag">
+        OFFICIAL EVENT REGISTRATION
+      </div>
+
+      <h2>Register Your Team</h2>
+
+      <p>
+        Submit your team details, pitch proposal and payment confirmation
+        to complete your SSREC event registration.
+      </p>
+
+    </div>
+  </section>
+
+
+  <!-- FORM -->
+  <main class="form-wrapper">
+    <div class="container">
+
+      <form id="registrationForm">
+
+
+        <!-- TEAM DETAILS -->
+        <section class="section">
+
+          <div class="section-header">
+
+            <div class="section-number">01</div>
+
+            <div>
+              <h3>Team Details</h3>
+              <p>Enter your team's basic information.</p>
+            </div>
+
+          </div>
+
+          <div class="grid">
+
+            <div class="field full">
+
+              <label for="teamName">
+                TEAM NAME *
+              </label>
+
+              <input
+                id="teamName"
+                name="teamName"
+                type="text"
+                placeholder="Enter your team name"
+                required
+              >
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- PITCH PROPOSAL -->
+        <section class="section">
+
+          <div class="section-header">
+
+            <div class="section-number">02</div>
+
+            <div>
+              <h3>Pitch Proposal</h3>
+              <p>Tell us about your idea or project.</p>
+            </div>
+
+          </div>
+
+
+          <div class="field">
+
+            <label>
+              PARTICIPATION CATEGORY *
+            </label>
+
+            <div class="pitch-options">
+
+              <div class="pitch-option">
+
+                <input
+                  type="radio"
+                  id="ideaPitch"
+                  name="participationCategory"
+                  value="Idea Pitch"
+                  required
+                >
+
+                <label
+                  for="ideaPitch"
+                  class="pitch-label"
+                >
+                  <strong>Idea Pitch</strong>
+                  <span>Early concept stage</span>
+                </label>
+
+              </div>
+
+
+              <div class="pitch-option">
+
+                <input
+                  type="radio"
+                  id="projectPitch"
+                  name="participationCategory"
+                  value="Project Pitch"
+                >
+
+                <label
+                  for="projectPitch"
+                  class="pitch-label"
+                >
+                  <strong>Project Pitch</strong>
+                  <span>Prototype / Working Model</span>
+                </label>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="grid">
+
+            <div class="field">
+
+              <label for="projectTitle">
+                TITLE OF IDEA / PROJECT *
+              </label>
+
+              <input
+                id="projectTitle"
+                name="projectTitle"
+                type="text"
+                placeholder="Enter your idea / project title"
+                required
+              >
+
+            </div>
+
+
+            <div class="field">
+
+              <label for="domain">
+                DOMAIN *
+              </label>
+
+              <input
+                id="domain"
+                name="domain"
+                type="text"
+                placeholder="e.g. AI, IoT, Web, Robotics"
+                required
+              >
+
+            </div>
+
+
+            <div class="field full">
+
+              <label for="description">
+                BRIEF DESCRIPTION *
+              </label>
+
+              <textarea
+                id="description"
+                name="description"
+                placeholder="Briefly explain your idea / project..."
+                required
+              ></textarea>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- TEAM LEADER -->
+        <section class="section">
+
+          <div class="section-header">
+
+            <div class="section-number">03</div>
+
+            <div>
+              <h3>Team Leader</h3>
+              <p>Primary contact person for the team.</p>
+            </div>
+
+          </div>
+
+
+          <div class="grid">
+
+            <div class="field">
+
+              <label for="leaderName">
+                FULL NAME *
+              </label>
+
+              <input
+                id="leaderName"
+                name="leaderName"
+                type="text"
+                placeholder="Enter full name"
+                required
+              >
+
+            </div>
+
+
+            <div class="field">
+
+              <label for="leaderEmail">
+                EMAIL *
+              </label>
+
+              <input
+                id="leaderEmail"
+                name="leaderEmail"
+                type="email"
+                placeholder="name@example.com"
+                required
+              >
+
+            </div>
+
+
+            <div class="field">
+
+              <label for="leaderPhone">
+                MOBILE NUMBER *
+              </label>
+
+              <input
+                id="leaderPhone"
+                name="leaderPhone"
+                type="tel"
+                pattern="[0-9]{10}"
+                placeholder="10-digit number"
+                required
+              >
+
+            </div>
+
+
+            <div class="field">
+
+              <label for="leaderDepartment">
+                DEPARTMENT *
+              </label>
+
+              <input
+                id="leaderDepartment"
+                name="leaderDepartment"
+                type="text"
+                placeholder="Enter department"
+                required
+              >
+
+            </div>
+
+
+            <div class="field">
+
+              <label for="leaderYear">
+                YEAR OF STUDY *
+              </label>
+
+              <select
+                id="leaderYear"
+                name="leaderYear"
+                required
+              >
+
+                <option value="">Select year</option>
+                <option>1st Year</option>
+                <option>2nd Year</option>
+                <option>3rd Year</option>
+                <option>4th Year</option>
+
+              </select>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- TEAM MEMBERS -->
+        <section class="section">
+
+          <div class="section-header">
+
+            <div class="section-number">04</div>
+
+            <div>
+              <h3>Team Members</h3>
+              <p>Minimum 1 and maximum 3 members. Member 2 and Member 3 are optional.</p>
+            </div>
+
+          </div>
+
+
+          <!-- MEMBER 1 -->
+          <div class="member-card">
+
+            <div class="member-head">
+
+              <div>
+                <span class="member-number">MEMBER 01</span>
+                <h4>Team Member 1</h4>
+              </div>
+
+              <span class="required-badge">Required</span>
+
+            </div>
+
+            <div class="grid">
+
+              <div class="field">
+                <label for="member1Name">FULL NAME *</label>
+                <input
+                  id="member1Name"
+                  name="member1Name"
+                  type="text"
+                  placeholder="Enter full name"
+                  required
+                >
+              </div>
+
+              <div class="field">
+                <label for="member1Email">EMAIL *</label>
+                <input
+                  id="member1Email"
+                  name="member1Email"
+                  type="email"
+                  placeholder="name@example.com"
+                  required
+                >
+              </div>
+
+              <div class="field">
+                <label for="member1Mobile">MOBILE NUMBER *</label>
+                <input
+                  id="member1Mobile"
+                  name="member1Mobile"
+                  type="tel"
+                  pattern="[0-9]{10}"
+                  placeholder="10-digit number"
+                  required
+                >
+              </div>
+
+              <div class="field">
+                <label for="member1Department">DEPARTMENT *</label>
+                <input
+                  id="member1Department"
+                  name="member1Department"
+                  type="text"
+                  placeholder="Enter department"
+                  required
+                >
+              </div>
+
+              <div class="field">
+                <label for="member1Year">YEAR OF STUDY *</label>
+                <select id="member1Year" name="member1Year" required>
+                  <option value="">Select year</option>
+                  <option value="1st Year">1st Year</option>
+                  <option value="2nd Year">2nd Year</option>
+                  <option value="3rd Year">3rd Year</option>
+                  <option value="4th Year">4th Year</option>
+                </select>
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- MEMBER 2 -->
+          <div class="member-card">
+
+            <div class="member-head">
+
+              <div>
+                <span class="member-number">MEMBER 02</span>
+                <h4>Team Member 2</h4>
+              </div>
+
+              <span class="required-badge">Optional</span>
+
+            </div>
+
+            <div class="grid">
+
+              <div class="field">
+                <label for="member2Name">FULL NAME</label>
+                <input
+                  id="member2Name"
+                  name="member2Name"
+                  type="text"
+                  placeholder="Enter full name"
+                >
+              </div>
+
+              <div class="field">
+                <label for="member2Email">EMAIL</label>
+                <input
+                  id="member2Email"
+                  name="member2Email"
+                  type="email"
+                  placeholder="name@example.com"
+                >
+              </div>
+
+              <div class="field">
+                <label for="member2Mobile">MOBILE NUMBER</label>
+                <input
+                  id="member2Mobile"
+                  name="member2Mobile"
+                  type="tel"
+                  pattern="[0-9]{10}"
+                  placeholder="10-digit number"
+                >
+              </div>
+
+              <div class="field">
+                <label for="member2Department">DEPARTMENT</label>
+                <input
+                  id="member2Department"
+                  name="member2Department"
+                  type="text"
+                  placeholder="Enter department"
+                >
+              </div>
+
+              <div class="field">
+                <label for="member2Year">YEAR OF STUDY</label>
+                <select id="member2Year" name="member2Year">
+                  <option value="">Select year</option>
+                  <option value="1st Year">1st Year</option>
+                  <option value="2nd Year">2nd Year</option>
+                  <option value="3rd Year">3rd Year</option>
+                  <option value="4th Year">4th Year</option>
+                </select>
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- MEMBER 3 -->
+          <div class="member-card">
+
+            <div class="member-head">
+
+              <div>
+                <span class="member-number">MEMBER 03</span>
+                <h4>Team Member 3</h4>
+              </div>
+
+              <span class="required-badge">Optional</span>
+
+            </div>
+
+            <div class="grid">
+
+              <div class="field">
+                <label for="member3Name">FULL NAME</label>
+                <input
+                  id="member3Name"
+                  name="member3Name"
+                  type="text"
+                  placeholder="Enter full name"
+                >
+              </div>
+
+              <div class="field">
+                <label for="member3Email">EMAIL</label>
+                <input
+                  id="member3Email"
+                  name="member3Email"
+                  type="email"
+                  placeholder="name@example.com"
+                >
+              </div>
+
+              <div class="field">
+                <label for="member3Mobile">MOBILE NUMBER</label>
+                <input
+                  id="member3Mobile"
+                  name="member3Mobile"
+                  type="tel"
+                  pattern="[0-9]{10}"
+                  placeholder="10-digit number"
+                >
+              </div>
+
+              <div class="field">
+                <label for="member3Department">DEPARTMENT</label>
+                <input
+                  id="member3Department"
+                  name="member3Department"
+                  type="text"
+                  placeholder="Enter department"
+                >
+              </div>
+
+              <div class="field">
+                <label for="member3Year">YEAR OF STUDY</label>
+                <select id="member3Year" name="member3Year">
+                  <option value="">Select year</option>
+                  <option value="1st Year">1st Year</option>
+                  <option value="2nd Year">2nd Year</option>
+                  <option value="3rd Year">3rd Year</option>
+                  <option value="4th Year">4th Year</option>
+                </select>
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- PAYMENT -->
+        <section class="section">
+
+          <div class="section-header">
+
+            <div class="section-number">05</div>
+
+            <div>
+              <h3>Payment</h3>
+              <p>Complete the registration payment.</p>
+            </div>
+
+          </div>
+
+
+          <div class="payment-box">
+
+            <div class="qr-box">
+
+              <img
+                src="payment-qr.jpeg"
+                alt="Payment QR Code"
+              >
+
+            </div>
+
+
+            <div class="payment-info">
+
+              <div class="fee">
+                ₹200
+                <small>Registration Fee</small>
+              </div>
+
+
+              <div class="upi">
+
+                <strong>UPI ID:</strong><br>
+
+                itzsiva01@oksbi
+
+              </div>
+
+
+              <div class="payment-note">
+
+                Scan the QR code or use the UPI ID to complete
+                the payment.
+
+              </div>
+
+
+              <div class="field">
+
+                <label for="transactionId">
+                  TRANSACTION ID *
+                </label>
+
+                <input
+                  id="transactionId"
+                  name="transactionId"
+                  type="text"
+                  placeholder="Enter payment transaction ID"
+                  required
+                >
+
+              </div>
+
+
+              <div class="field">
+
+                <label for="paymentScreenshot">
+                  PAYMENT SCREENSHOT *
+                </label>
+
+                <input
+                  id="paymentScreenshot"
+                  name="paymentScreenshot"
+                  type="file"
+                  accept="image/jpeg,image/png"
+                  class="file-input"
+                  required
+                >
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- SUCCESS -->
+        <div
+          id="successMessage"
+          class="success"
+          hidden
+        >
+
+          <div class="success-icon">
+            ✓
+          </div>
+
+          <h3>Registration Submitted</h3>
+
+          <p>
+            Your registration has been submitted successfully.
+          </p>
+
+        </div>
+
+
+        <!-- SUBMIT -->
+        <div class="submit-area">
+
+          <button
+            type="submit"
+            class="submit-btn"
+          >
+            SUBMIT REGISTRATION
+          </button>
+
+          <div class="secure-note">
+            Your registration details will be securely recorded.
+          </div>
+
+        </div>
+
+
+      </form>
+
+    </div>
+  </main>
+
+
+  <!-- FOOTER -->
+  <footer>
+
+    <div class="container">
+
+      <strong>Sri Sai Ranganathan Engineering College</strong>
+      <br>
+
+      SSREC • Coimbatore
+
+      <br><br>
+
+      <span>
+        Contact:
+        reccbe@reccbe.ac.in
+      </span>
+
+    </div>
+
+  </footer>
+
+
+  <!-- SUCCESS MODAL -->
+  <div
+    id="successModal"
+    class="modal"
+    hidden
+  >
+
+    <div class="modal-card">
+
+      <div class="modal-icon">
+        ✓
+      </div>
+
+      <h2>Registration Successful!</h2>
+
+      <p>
+        Your team registration has been submitted successfully.
+        Thank you for registering with SSREC.
+      </p>
+
+      <button
+        type="button"
+        class="close-btn"
+        id="closeModal"
+      >
+        Done
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <script src="script.js"></script>
+
+</body>
+</html>
