@@ -1295,6 +1295,7 @@ export const PitchPerfectPage: React.FC<PitchPerfectPageProps> = ({ onBackToHome
                   CASH PRIZE POOL
                 </span>
                 <strong style={{ fontSize: '1rem', color: '#D97706' }}>UP TO ₹20,000/-</strong>
+              </div>
             </div>
 
             {/* Countdown Pod */}
