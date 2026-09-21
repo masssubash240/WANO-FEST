@@ -604,44 +604,18 @@ body.custom-cursor-enabled [role="button"] {
 }
 
 /* ══════════════════════════════════════════════
-   HERO RESPONSIVE 2-COL GRID & BANNER POSTER
+   HERO RESPONSIVE CONTAINER
    ══════════════════════════════════════════════ */
 .hero-main-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.85fr);
-  align-items: center;
-  gap: 32px;
-}
-
-.pitch-poster-hover-card {
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, border-color 0.4s ease;
-}
-
-.pitch-poster-hover-card:hover {
-  transform: translateY(-6px) scale(1.02);
-  border-color: #00e5ff !important;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.95), 0 0 45px rgba(91, 61, 245, 0.5), 0 0 30px rgba(0, 229, 255, 0.4) !important;
-}
-
-.pitch-poster-hover-card:hover .poster-img-zoom {
-  transform: scale(1.03);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
 }
 
 @media (max-width: 980px) {
   .hero-main-grid {
-    grid-template-columns: 1fr !important;
-    gap: 20px !important;
     padding: 70px 16px 30px 16px !important;
-  }
-  .hero-banner-container {
-    width: 100% !important;
-    margin-top: 8px !important;
-  }
-  .pitch-poster-hover-card {
-    max-width: 320px !important;
-  }
-  .pitch-poster-hover-card img {
-    max-height: 320px !important;
   }
 }
 

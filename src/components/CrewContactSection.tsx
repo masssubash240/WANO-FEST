@@ -27,22 +27,31 @@ const CREW_CONTACTS: CrewContact[] = [
     id: 'subash',
     shortName: 'SUBASH',
     role: 'CYBER PIRATE / SECURITY CAPTAIN',
-    phone: 'godofcybertech.vercel.app',
-    url: 'https://godofcybertech.vercel.app/',
-    tel: '6383853695',
-    actionLabel: 'VISIT SUBASH',
-    icon: '🌐',
+    phone: '+91 63838 53695',
+    tel: '+916383853695',
+    actionLabel: 'CALL SUBASH',
+    icon: '📞',
     color: '#00e5ff',
   },
   {
     id: 'raj',
     shortName: 'RAJ',
-    role: 'DIGITAL STRATEGIST / CREW MEMBER',
+    role: 'TEAM LEAD TECH',
     phone: '+91 93611 84362',
     tel: '+919361184362',
     actionLabel: 'CALL RAJ',
     icon: '📞',
     color: '#ffb703',
+  },
+  {
+    id: 'rajapriyan',
+    shortName: 'RAJAPRIYAN',
+    role: 'SECRETARY',
+    phone: '+91 63812 39375',
+    tel: '+916381239375',
+    actionLabel: 'CALL RAJAPRIYAN',
+    icon: '📞',
+    color: '#ec4899',
   },
 ];
 
@@ -207,7 +216,7 @@ export const CrewContactSection: React.FC = () => {
 
         {/* TEAM WANTED POSTER (teams.png) */}
         <div
-          className="ship-deck-float"
+          className="ship-deck-float developer-banner-container"
           style={{
             position: 'relative',
             maxWidth: '1240px',
@@ -272,6 +281,8 @@ export const CrewContactSection: React.FC = () => {
               width: '100%',
               height: 'auto',
               display: 'block',
+              minHeight: '200px', /* Minimum height to make it bigger on mobile */
+              objectFit: 'cover'
             }}
           />
         </div>
@@ -510,7 +521,8 @@ export const CrewContactSection: React.FC = () => {
             alt="CYBITRADIC WANO FEST DEVELOPERS — SUBASH, SATHI, RAJ"
             style={{
               width: '100%',
-              height: 'auto',
+              height: '100%',
+              minHeight: '350px',
               maxHeight: '720px',
               objectFit: 'cover',
               objectPosition: 'center',
@@ -528,60 +540,7 @@ export const CrewContactSection: React.FC = () => {
             }}
           />
 
-          {/* Bottom Grand Line Banner */}
-          <div
-            style={{
-              position: 'absolute',
-              bottom: 0,
-              left: 0,
-              right: 0,
-              padding: '30px',
-              textAlign: 'center',
-              zIndex: 3,
-            }}
-          >
-            <div
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '12px',
-                background: 'rgba(6, 8, 14, 0.85)',
-                padding: '6px 20px',
-                borderRadius: '20px',
-                border: '1px solid rgba(255, 183, 3, 0.4)',
-                backdropFilter: 'blur(10px)',
-                marginBottom: '10px',
-              }}
-            >
-              <span style={{ fontSize: '0.8rem', color: '#ffb703', fontWeight: 800, letterSpacing: '0.2em' }}>
-                <a
-                  href="https://godofcybertech.vercel.app/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ color: '#00e5ff', textDecoration: 'none' }}
-                  onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
-                  onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}
-                >
-                  M. SUBASH KUMAR ↗
-                </a>{' '}
-                • SATHIYASEELAN • RAJ
-              </span>
-            </div>
 
-            <h4
-              style={{
-                fontFamily: 'var(--font-title)',
-                fontSize: 'clamp(1.4rem, 3.2vw, 2.4rem)',
-                fontWeight: 900,
-                color: '#fff',
-                letterSpacing: '0.08em',
-                margin: 0,
-                textShadow: '0 2px 20px rgba(0,0,0,0.9)',
-              }}
-            >
-              BUILD. EXPLORE. CREATE. TOGETHER.
-            </h4>
-          </div>
         </div>
 
         {/* FINAL ANIMATION: OCEAN WAVE & PARCHMENT TO WANOFEST 2026 */}

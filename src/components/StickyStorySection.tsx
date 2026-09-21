@@ -24,7 +24,7 @@ const CHAPTERS: StoryChapter[] = [
     description:
       'Wano Fest is not merely a symposium; it is a legendary pilgrimage. Across the digital Grand Line, brightest engineering prodigies, digital artists, and creative rebels gather under one banner to challenge existing horizons.',
     image: '/images/will_of_d.jpg',
-    video: '/luffy2.mp4',
+    video: '/luffy.mp4',
     accent: '#00e5ff',
   },
   {
@@ -37,7 +37,7 @@ const CHAPTERS: StoryChapter[] = [
     description:
       'In the Zoro Tech Division, code is treated as steel. Algorithms are honed with discipline, neural nets are forged with precision, and every security exploit patched is a duel won against chaos.',
     image: '/images/zoro_tech.jpg',
-    video: '/video2.mp4',
+    video: '/luffy2.mp4',
     accent: '#d90429',
   },
   {
@@ -50,7 +50,7 @@ const CHAPTERS: StoryChapter[] = [
     description:
       'From vibrant cosplay masquerades to midnight hackathons, the power of CybiTradic lies in Nakama. Tech and Non-Tech dissolve into a single electrifying celebration where everyone finds their crew.',
     image: '/images/nakama_tribute.jpg',
-    video: '/luffy2.mp4',
+    video: '/lufy3.mp4',
     accent: '#ffb703',
   },
   {
@@ -63,7 +63,7 @@ const CHAPTERS: StoryChapter[] = [
     description:
       'When the final clue is solved and the last match ends, champions will rise. Winners will be crowned across nine events — and your story becomes part of the symposium legend.',
     image: '/images/grand_line_visuals.jpg',
-    video: '/all.mp4',
+    video: '/luffy.mp4',
     accent: '#9d4edd',
   },
 ];

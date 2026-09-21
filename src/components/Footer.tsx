@@ -47,7 +47,6 @@ export const Footer: React.FC = () => {
     { label: 'Official Mail', icon: <Mail size={18} />, href: `mailto:${SITE_CONFIG.college.email}`, color: '#ffb703' },
     { label: 'Instagram', icon: <Instagram size={18} />, href: SITE_CONFIG.college.instagramUrl, color: '#ff4d6d' },
     { label: 'YouTube Stream', icon: <Youtube size={18} />, href: SITE_CONFIG.college.youtubeUrl, color: '#d90429' },
-    { label: 'WhatsApp Dispatch', icon: <MessageCircle size={18} />, href: SITE_CONFIG.college.whatsappUrl, color: '#25d366' },
   ];
 
   return (

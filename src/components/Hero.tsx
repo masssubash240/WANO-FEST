@@ -236,14 +236,13 @@ export const Hero: React.FC<HeroProps> = ({ onRegisterClick, onNavigatePitch }) 
           width: '100%',
           margin: '0 auto',
           padding: '80px 24px 30px 24px',
-          display: 'grid',
-          gridTemplateColumns: 'minmax(0, 1.25fr) minmax(0, 0.85fr)',
-          alignItems: 'center',
-          gap: '32px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'flex-start',
         }}
       >
-        {/* ─── LEFT COLUMN: HERO CONTENT & ACTIONS ─── */}
-        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        {/* ─── HERO CONTENT & ACTIONS ─── */}
+        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', maxWidth: '860px', width: '100%' }}>
           {/* Top Tagline / Category Badge */}
           <div
             style={{
@@ -317,7 +316,7 @@ export const Hero: React.FC<HeroProps> = ({ onRegisterClick, onNavigatePitch }) 
               fontSize: 'clamp(0.88rem, 1.15vw, 1.05rem)',
               color: 'rgba(230, 238, 252, 0.88)',
               lineHeight: 1.6,
-              maxWidth: '520px',
+              maxWidth: '680px',
               marginBottom: '20px',
               textShadow: '0 2px 8px rgba(0,0,0,0.9)',
             }}
@@ -540,144 +539,6 @@ export const Hero: React.FC<HeroProps> = ({ onRegisterClick, onNavigatePitch }) 
                   </span>
                 </div>
               ))}
-            </div>
-          </div>
-        </div>
-
-        {/* ─── RIGHT COLUMN: FEATURED PITCH PERFECT '26 BANNER POSTER ─── */}
-        <div
-          className="hero-banner-container"
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            position: 'relative',
-          }}
-        >
-          <div
-            onClick={onNavigatePitch}
-            data-cursor="expand"
-            data-cursor-text="PITCH '26"
-            className="pitch-poster-hover-card"
-            style={{
-              position: 'relative',
-              borderRadius: '22px',
-              padding: '8px',
-              background: 'linear-gradient(135deg, rgba(91, 61, 245, 0.45) 0%, rgba(0, 229, 255, 0.3) 50%, rgba(245, 158, 11, 0.35) 100%)',
-              border: '2px solid rgba(0, 229, 255, 0.45)',
-              boxShadow: '0 20px 50px rgba(0, 0, 0, 0.85), 0 0 35px rgba(91, 61, 245, 0.35), 0 0 20px rgba(0, 229, 255, 0.25)',
-              cursor: 'pointer',
-              overflow: 'hidden',
-              transition: 'all 0.35s cubic-bezier(0.16, 1, 0.3, 1)',
-              maxWidth: '410px',
-              width: '100%',
-            }}
-          >
-            {/* Top Badge Strip */}
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '6px 12px 8px 12px',
-              }}
-            >
-              <span
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  fontSize: '0.7rem',
-                  fontWeight: 900,
-                  letterSpacing: '0.12em',
-                  color: '#00e5ff',
-                  textTransform: 'uppercase',
-                }}
-              >
-                <span style={{ width: '7px', height: '7px', borderRadius: '50%', backgroundColor: '#00e5ff', boxShadow: '0 0 8px #00e5ff' }} />
-                FLAGSHIP INNOVATION EVENT
-              </span>
-              <span
-                style={{
-                  fontSize: '0.7rem',
-                  fontWeight: 900,
-                  color: '#fbbf24',
-                  background: 'rgba(245, 158, 11, 0.15)',
-                  border: '1px solid rgba(245, 158, 11, 0.4)',
-                  borderRadius: '20px',
-                  padding: '2px 9px',
-                }}
-              >
-                ₹20,000 PRIZE
-              </span>
-            </div>
-
-            {/* Poster Image Container */}
-            <div
-              style={{
-                position: 'relative',
-                borderRadius: '16px',
-                overflow: 'hidden',
-                backgroundColor: '#0a0f1d',
-              }}
-            >
-              <img
-                src="/images/pitch-perfect-poster.jpg"
-                alt="Pitch Perfect '26 Official Event Banner - Sri Sai Ranganathan Engineering College"
-                className="poster-img-zoom"
-                style={{
-                  width: '100%',
-                  height: 'auto',
-                  maxHeight: '430px',
-                  objectFit: 'contain',
-                  display: 'block',
-                  transition: 'transform 0.4s ease',
-                }}
-              />
-
-              {/* Bottom Quick Action Overlay */}
-              <div
-                style={{
-                  position: 'absolute',
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  padding: '16px 14px 12px 14px',
-                  background: 'linear-gradient(180deg, transparent 0%, rgba(4, 5, 8, 0.95) 85%)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  gap: '8px',
-                }}
-              >
-                <div>
-                  <div style={{ fontSize: '0.9rem', fontWeight: 900, color: '#ffffff', letterSpacing: '0.02em' }}>
-                    PITCH PERFECT ’26
-                  </div>
-                  <div style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: 600 }}>
-                    09 Oct 2026 • ₹200 / head
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    padding: '7px 14px',
-                    borderRadius: '30px',
-                    background: 'linear-gradient(135deg, #5B3DF5, #7C4DFF)',
-                    color: '#ffffff',
-                    fontSize: '0.76rem',
-                    fontWeight: 800,
-                    boxShadow: '0 4px 14px rgba(91, 61, 245, 0.6)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  <span>VIEW & REGISTER</span>
-                  <span>↗</span>
-                </div>
-              </div>
             </div>
           </div>
         </div>

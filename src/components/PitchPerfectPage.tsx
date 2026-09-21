@@ -54,8 +54,10 @@ export const PitchPerfectPage: React.FC<PitchPerfectPageProps> = ({ onBackToHome
   // Active Judging criterion hover
   const [hoveredCriterion, setHoveredCriterion] = useState<number | null>(null);
 
-  // Custom Cursor state
-  const [cursorPos, setCursorPos] = useState({ x: -100, y: -100 });
+  // Custom Cursor state (ref-driven: no React re-render on mouse move)
+  const cursorDotRef = useRef<HTMLDivElement | null>(null);
+  const cursorTargetRef = useRef({ x: -100, y: -100 });
+  const cursorCurrentRef = useRef({ x: -100, y: -100 });
   const [cursorText, setCursorText] = useState('');
   const [cursorExpanded, setCursorExpanded] = useState(false);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
@@ -145,16 +147,17 @@ export const PitchPerfectPage: React.FC<PitchPerfectPageProps> = ({ onBackToHome
     const handleScroll = () => {
       setScrolled(window.scrollY > 40);
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Custom Cursor follow
+  // Custom Cursor follow — ref-driven + rAF lerp (no React re-render per mouse move)
   useEffect(() => {
     if (isTouchDevice) return;
 
     const handleMouseMove = (e: MouseEvent) => {
-      setCursorPos({ x: e.clientX, y: e.clientY });
+      cursorTargetRef.current.x = e.clientX;
+      cursorTargetRef.current.y = e.clientY;
 
       // Parallax mouse update
       const normX = (e.clientX / window.innerWidth - 0.5) * 2;
@@ -163,8 +166,33 @@ export const PitchPerfectPage: React.FC<PitchPerfectPageProps> = ({ onBackToHome
       mouseRef.current.targetY = normY;
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+
+    let rafId = 0;
+    const animateCursor = () => {
+      const cur = cursorCurrentRef.current;
+      const tgt = cursorTargetRef.current;
+
+      // Snap on first appearance, then ease toward the target
+      if (cur.x < -50 || cur.y < -50) {
+        cur.x = tgt.x;
+        cur.y = tgt.y;
+      } else {
+        cur.x += (tgt.x - cur.x) * 0.22;
+        cur.y += (tgt.y - cur.y) * 0.22;
+      }
+
+      if (cursorDotRef.current) {
+        cursorDotRef.current.style.transform = `translate3d(${cur.x}px, ${cur.y}px, 0) translate(-50%, -50%)`;
+      }
+      rafId = requestAnimationFrame(animateCursor);
+    };
+    rafId = requestAnimationFrame(animateCursor);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      cancelAnimationFrame(rafId);
+    };
   }, [isTouchDevice]);
 
   // 3D Innovation Kinetic Sculpture Canvas (WebGL-inspired 3D particle torus)
@@ -596,6 +624,7 @@ export const PitchPerfectPage: React.FC<PitchPerfectPageProps> = ({ onBackToHome
 
   return (
     <div
+      className={isTouchDevice ? 'pitch-page pitch-touch' : 'pitch-page'}
       style={{
         position: 'relative',
         minHeight: '100vh',
@@ -609,14 +638,15 @@ export const PitchPerfectPage: React.FC<PitchPerfectPageProps> = ({ onBackToHome
       {/* ─── CUSTOM FRAMER CURSOR ─── */}
       {!isTouchDevice && (
         <div
+          ref={cursorDotRef}
           style={{
             position: 'fixed',
-            left: cursorPos.x,
-            top: cursorPos.y,
+            left: 0,
+            top: 0,
             width: cursorExpanded ? '88px' : '16px',
             height: cursorExpanded ? '88px' : '16px',
             borderRadius: '50%',
-            backgroundColor: cursorExpanded ? 'rgba(91, 61, 245, 0.92)' : '#050505',
+            backgroundColor: cursorExpanded ? 'rgba(91, 61, 245, 0.92)' : '#FFFFFF',
             color: '#FFFFFF',
             display: 'flex',
             alignItems: 'center',
@@ -625,11 +655,12 @@ export const PitchPerfectPage: React.FC<PitchPerfectPageProps> = ({ onBackToHome
             fontWeight: 800,
             letterSpacing: '0.08em',
             pointerEvents: 'none',
-            transform: 'translate(-50%, -50%)',
+            transform: 'translate3d(-100px, -100px, 0) translate(-50%, -50%)',
             transition: 'width 0.22s cubic-bezier(0.16, 1, 0.3, 1), height 0.22s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease',
             zIndex: 999999,
             mixBlendMode: cursorExpanded ? 'normal' : 'difference',
             boxShadow: cursorExpanded ? '0 10px 30px rgba(91, 61, 245, 0.45)' : 'none',
+            willChange: 'transform',
           }}
         >
           {cursorExpanded && cursorText}
@@ -763,36 +794,49 @@ export const PitchPerfectPage: React.FC<PitchPerfectPageProps> = ({ onBackToHome
             className="pitch-desktop-nav"
           >
             {[
+              { label: 'Events', id: '__back__' },
               { label: 'About', id: 'about' },
               { label: 'Categories', id: 'categories' },
               { label: 'Experience', id: 'story' },
               { label: 'Prize', id: 'prize' },
               { label: 'Rules', id: 'rules' },
               { label: 'FAQ', id: 'faq' },
-            ].map((item) => (
-              <button
-                key={item.id}
-                onClick={() => scrollToSection(item.id)}
-                onMouseEnter={() => {
-                  setCursorExpanded(true);
-                  setCursorText('JUMP');
-                }}
-                onMouseLeave={() => setCursorExpanded(false)}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  fontSize: '0.88rem',
-                  fontWeight: 600,
-                  color: '#334155',
-                  cursor: 'pointer',
-                  padding: '4px 0',
-                  position: 'relative',
-                  transition: 'color 0.2s',
-                }}
-              >
-                {item.label}
-              </button>
-            ))}
+            ].map((item) => {
+              const isBack = item.id === '__back__';
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    if (isBack) {
+                      onBackToHome();
+                    } else {
+                      scrollToSection(item.id);
+                    }
+                  }}
+                  onMouseEnter={() => {
+                    setCursorExpanded(true);
+                    setCursorText(isBack ? 'BACK' : 'JUMP');
+                  }}
+                  onMouseLeave={() => setCursorExpanded(false)}
+                  style={{
+                    background: isBack ? 'rgba(91, 61, 245, 0.08)' : 'none',
+                    border: isBack ? '1.5px solid rgba(91, 61, 245, 0.4)' : 'none',
+                    borderRadius: isBack ? '100px' : '0',
+                    fontSize: isBack ? '0.82rem' : '0.88rem',
+                    fontWeight: isBack ? 800 : 600,
+                    letterSpacing: isBack ? '0.06em' : '0',
+                    color: isBack ? '#5B3DF5' : '#334155',
+                    cursor: 'pointer',
+                    padding: isBack ? '7px 16px' : '4px 0',
+                    position: 'relative',
+                    transition: 'all 0.2s',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {isBack ? '← Events' : item.label}
+                </button>
+              );
+            })}
           </div>
 
           {/* Right Action CTAs */}
@@ -889,6 +933,7 @@ export const PitchPerfectPage: React.FC<PitchPerfectPageProps> = ({ onBackToHome
           >
             <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
               {[
+                { label: '← EVENTS', id: '__back__' },
                 { label: '01 / ABOUT EVENT', id: 'about' },
                 { label: '02 / CATEGORIES', id: 'categories' },
                 { label: '03 / EXPERIENCE JOURNEY', id: 'story' },
@@ -899,15 +944,22 @@ export const PitchPerfectPage: React.FC<PitchPerfectPageProps> = ({ onBackToHome
               ].map((m, idx) => (
                 <button
                   key={m.id}
-                  onClick={() => scrollToSection(m.id)}
+                  onClick={() => {
+                    if (m.id === '__back__') {
+                      setMobileMenuOpen(false);
+                      onBackToHome();
+                    } else {
+                      scrollToSection(m.id);
+                    }
+                  }}
                   style={{
                     background: 'none',
                     border: 'none',
                     textAlign: 'left',
                     fontFamily: "'Space Grotesk', sans-serif",
-                    fontSize: '1.4rem',
+                    fontSize: m.id === '__back__' ? '1.2rem' : '1.4rem',
                     fontWeight: 800,
-                    color: '#050505',
+                    color: m.id === '__back__' ? '#5B3DF5' : '#050505',
                     padding: '8px 0',
                     borderBottom: '1px solid #f1f5f9',
                     cursor: 'pointer',
@@ -4263,6 +4315,17 @@ export const PitchPerfectPage: React.FC<PitchPerfectPageProps> = ({ onBackToHome
         @keyframes slideUp {
           from { opacity: 0; transform: translateY(16px); }
           to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Custom cursor: hide the OS cursor across the whole pitch page (except text fields) */
+        .pitch-page:not(.pitch-touch),
+        .pitch-page:not(.pitch-touch) * {
+          cursor: none !important;
+        }
+        .pitch-page:not(.pitch-touch) input,
+        .pitch-page:not(.pitch-touch) textarea,
+        .pitch-page:not(.pitch-touch) select {
+          cursor: auto !important;
         }
 
         @media (min-width: 900px) {

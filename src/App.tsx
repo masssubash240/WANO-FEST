@@ -190,57 +190,7 @@ function App() {
     document.getElementById('events')?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  // Floating WhatsApp Pulse Button
-  // Floating WhatsApp Quick Connect Button (Sathiyaseelan +91 96267 44195)
-  const renderFloatingWhatsApp = () => (
-    <a
-      href={`${SITE_CONFIG.college.whatsappUrl}?text=Hi%20Sathiyaseelan,%20I%20have%20an%20inquiry%20regarding%20CybiTradic%20Wano%20Fest%202026`}
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label="Chat with Sathiyaseelan on WhatsApp (+91 96267 44195)"
-      className="floating-whatsapp-btn"
-      style={{
-        position: 'fixed',
-        bottom: '28px',
-        right: '28px',
-        zIndex: 9999,
-        display: 'flex',
-        alignItems: 'center',
-        gap: '10px',
-        padding: '8px 18px 8px 12px',
-        borderRadius: '35px',
-        backgroundColor: '#25d366',
-        color: '#ffffff',
-        textDecoration: 'none',
-        boxShadow: '0 8px 30px rgba(37, 211, 102, 0.6), 0 0 20px rgba(37, 211, 102, 0.4)',
-        transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-        cursor: 'pointer',
-        fontFamily: 'var(--font-body, system-ui, sans-serif)',
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.transform = 'scale(1.08) translateY(-2px)';
-        e.currentTarget.style.boxShadow = '0 12px 40px rgba(37, 211, 102, 0.85), 0 0 30px rgba(37, 211, 102, 0.6)';
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.transform = 'scale(1) translateY(0)';
-        e.currentTarget.style.boxShadow = '0 8px 30px rgba(37, 211, 102, 0.6), 0 0 20px rgba(37, 211, 102, 0.4)';
-      }}
-      title="Chat with Sathiyaseelan on WhatsApp (+91 96267 44195)"
-    >
-      <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <MessageCircle size={28} />
-        <span className="whatsapp-pulse-ring" />
-      </div>
-      <div style={{ display: 'flex', flexDirection: 'column', textAlign: 'left', lineHeight: 1.15 }}>
-        <span style={{ fontSize: '0.84rem', fontWeight: 900, color: '#ffffff', letterSpacing: '0.02em' }}>
-          Sathiyaseelan
-        </span>
-        <span style={{ fontSize: '0.68rem', fontWeight: 700, color: 'rgba(255,255,255,0.92)' }}>
-          +91 96267 44195
-        </span>
-      </div>
-    </a>
-  );
+
 
   // Global Toast Alert
   const renderGlobalToast = () =>
@@ -319,7 +269,7 @@ function App() {
               onClose={() => setWantedModalOpen(false)}
             />
             <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} initialTab={authModalTab} />
-            {renderFloatingWhatsApp()}
+
             {renderGlobalToast()}
           </div>
         </AuthProvider>
@@ -364,7 +314,7 @@ function App() {
               onClose={() => setWantedModalOpen(false)}
             />
             <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} initialTab={authModalTab} />
-            {renderFloatingWhatsApp()}
+
             {renderGlobalToast()}
           </div>
         </AuthProvider>
@@ -377,7 +327,7 @@ function App() {
     return (
       <AuthProvider>
         <PitchPerfectPage onBackToHome={handleBackToHome} onToast={showToast} />
-        {renderFloatingWhatsApp()}
+
         {renderGlobalToast()}
       </AuthProvider>
     );
@@ -503,7 +453,7 @@ function App() {
           <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} initialTab={authModalTab} />
 
           {/* â”€â”€â”€ FLOATING WHATSAPP BUTTON â”€â”€â”€ */}
-          {renderFloatingWhatsApp()}
+
 
           {/* â”€â”€â”€ GLOBAL TOAST â”€â”€â”€ */}
           {renderGlobalToast()}

@@ -1,4 +1,4 @@
-﻿import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import type { User, Session } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 
@@ -54,6 +54,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (data.session?.user) {
         setSession(data.session);
         setUser(toAuthUser(data.session.user));
+      } else {
+        const local = localStorage.getItem('ssrec_auth_user');
+        if (local) {
+          try {
+            setUser(JSON.parse(local));
+          } catch {}
+        }
       }
       setIsLoading(false);
     });
@@ -61,20 +68,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Listen for auth state changes (login, logout, token refresh)
     const { data: listener } = supabase.auth.onAuthStateChange((_event, s) => {
       setSession(s);
-      setUser(s?.user ? toAuthUser(s.user) : null);
+      if (s?.user) {
+        setUser(toAuthUser(s.user));
+      } else {
+        const local = localStorage.getItem('ssrec_auth_user');
+        if (local) {
+          try {
+            setUser(JSON.parse(local));
+          } catch {
+            setUser(null);
+          }
+        } else {
+          setUser(null);
+        }
+      }
       setIsLoading(false);
     });
 
     return () => { listener.subscription.unsubscribe(); };
   }, []);
 
-  /** Manually set user (used after Google callback decode if needed) */
+  /** Manually set user */
   const login = useCallback((u: AuthUser) => {
     setUser(u);
+    try {
+      localStorage.setItem('ssrec_auth_user', JSON.stringify(u));
+    } catch {}
   }, []);
 
   const logout = useCallback(async () => {
-    await supabase.auth.signOut();
+    await supabase.auth.signOut().catch(() => {});
+    try {
+      localStorage.removeItem('ssrec_auth_user');
+    } catch {}
     setUser(null);
     setSession(null);
   }, []);
