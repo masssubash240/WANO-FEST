@@ -127,6 +127,25 @@ export const EventRegistrationModal: React.FC<EventRegistrationModalProps> = ({
   // QR Zoom (Lightbox) state
   const [qrZoomOpen, setQrZoomOpen] = useState(false);
 
+  // Team Member count & dynamic fee calculation (₹200 / head)
+  const [selectedMemberCount, setSelectedMemberCount] = useState<number | null>(null);
+
+  // Auto-detect filled members: Leader (1) + any filled crew members (member1..4)
+  const autoMemberCount = (() => {
+    let count = 0;
+    if (formData.leader && formData.leader.trim().length > 0) count++;
+    if (formData.member1Name && formData.member1Name.trim().length > 0) count++;
+    if (formData.member2Name && formData.member2Name.trim().length > 0) count++;
+    if (formData.member3Name && formData.member3Name.trim().length > 0) count++;
+    if (formData.member4Name && formData.member4Name.trim().length > 0) count++;
+    return count > 0 ? count : 4; // default to 4 for official team registration
+  })();
+
+  const effectiveMemberCount = selectedMemberCount ?? autoMemberCount;
+  const registrationFeeAmount = effectiveMemberCount * 200;
+  const registrationFeeText = `₹${registrationFeeAmount}`;
+  const registrationFeeDetail = `₹200 × ${effectiveMemberCount} ${effectiveMemberCount === 1 ? 'member' : 'members'}`;
+
   // Supabase Auth Context & Modal States
   const { user, isAuthenticated, logout, login } = useAuth();
   const [authTab, setAuthTab] = useState<'login' | 'signup'>('login');
@@ -688,7 +707,9 @@ export const EventRegistrationModal: React.FC<EventRegistrationModalProps> = ({
           ? 'PAY-ON-SPOT / CASH'
           : formData.transactionId.trim(),
         agree: formData.agree || isSkippingPayment ? 'true' : 'false',
-        registrationFee: isSkippingPayment ? '₹200 (Pay at Venue)' : '₹200',
+        registrationFee: isSkippingPayment
+          ? `${registrationFeeText} (Pay at Venue - ${registrationFeeDetail})`
+          : `${registrationFeeText} (${registrationFeeDetail})`,
 
         paymentScreenshot: screenshotFile && base64 ? {
           name: screenshotFile.name,
@@ -1163,7 +1184,7 @@ export const EventRegistrationModal: React.FC<EventRegistrationModalProps> = ({
                   }}
                 >
                   <span style={{ color: '#00e676', fontSize: '0.8rem', fontWeight: 700 }}>
-                    ✓ Fee Paid: ₹200 (Txn: {formData.transactionId})
+                    ✓ Fee Paid: {registrationFeeText} ({registrationFeeDetail}) (Txn: {formData.transactionId})
                   </span>
                   <span style={{ color: '#8e9bb4', fontSize: '0.72rem' }}>{registrationResult.submittedAt}</span>
                 </div>
@@ -1866,7 +1887,7 @@ export const EventRegistrationModal: React.FC<EventRegistrationModalProps> = ({
                 ───────────────────────────────────────────────────────────── */}
                 {currentStep === 5 && (
                   <div>
-                    <div style={{ marginBottom: '18px' }}>
+                    <div style={{ marginBottom: '16px' }}>
                       <span style={{ fontSize: '0.75rem', color: '#00e5ff', fontWeight: 800, letterSpacing: '0.12em' }}>
                         SECTION 06
                       </span>
@@ -1874,8 +1895,77 @@ export const EventRegistrationModal: React.FC<EventRegistrationModalProps> = ({
                         Payment Details & Verification
                       </h3>
                       <p style={{ color: '#8e9bb4', fontSize: '0.82rem', margin: 0 }}>
-                        Pay registration fee of ₹200 using any UPI App and upload payment screenshot.
+                        Pay registration fee of <strong style={{ color: '#00e5ff' }}>{registrationFeeText}</strong> ({registrationFeeDetail}) using any UPI App and upload payment screenshot.
                       </p>
+                    </div>
+
+                    {/* Team Members Count Quick Selector (₹200 / Head) */}
+                    <div
+                      style={{
+                        padding: '12px 16px',
+                        borderRadius: '12px',
+                        background: 'rgba(0, 229, 255, 0.05)',
+                        border: '1px solid rgba(0, 229, 255, 0.22)',
+                        marginBottom: '16px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          marginBottom: '8px',
+                          flexWrap: 'wrap',
+                          gap: '6px',
+                        }}
+                      >
+                        <span style={{ fontSize: '0.74rem', color: '#8e9bb4', fontWeight: 800, letterSpacing: '0.08em' }}>
+                          TEAM PARTICIPANTS (₹200 / HEAD):
+                        </span>
+                        <span style={{ fontSize: '0.78rem', color: '#00e5ff', fontWeight: 800 }}>
+                          Total: <strong style={{ color: '#ffb703', fontSize: '0.92rem' }}>{registrationFeeText}</strong> ({registrationFeeDetail})
+                        </span>
+                      </div>
+
+                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                        {[1, 2, 3, 4, 5].map((count) => {
+                          const isSelected = effectiveMemberCount === count;
+                          return (
+                            <button
+                              key={count}
+                              type="button"
+                              onClick={() => setSelectedMemberCount(count)}
+                              style={{
+                                flex: '1 1 55px',
+                                padding: '8px 6px',
+                                borderRadius: '8px',
+                                border: `1.5px solid ${isSelected ? '#00e5ff' : 'rgba(255, 255, 255, 0.12)'}`,
+                                background: isSelected ? 'rgba(0, 229, 255, 0.22)' : 'rgba(255, 255, 255, 0.03)',
+                                color: isSelected ? '#00e5ff' : '#ffffff',
+                                fontSize: '0.78rem',
+                                fontWeight: 800,
+                                cursor: 'pointer',
+                                transition: 'all 0.18s ease',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                gap: '2px',
+                              }}
+                            >
+                              <span>{count === 1 ? '1 Solo' : `${count} Members`}</span>
+                              <span
+                                style={{
+                                  fontSize: '0.7rem',
+                                  fontWeight: 800,
+                                  color: isSelected ? '#ffb703' : '#8e9bb4',
+                                }}
+                              >
+                                ₹{count * 200}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
 
                     {/* Payment Info Card with User's QR Code */}
@@ -1896,7 +1986,9 @@ export const EventRegistrationModal: React.FC<EventRegistrationModalProps> = ({
                       <div style={{ flex: 1, minWidth: '220px' }}>
                         <div
                           style={{
-                            display: 'inline-block',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '8px',
                             padding: '4px 10px',
                             borderRadius: '6px',
                             background: 'rgba(255, 183, 3, 0.15)',
@@ -1907,24 +1999,33 @@ export const EventRegistrationModal: React.FC<EventRegistrationModalProps> = ({
                             marginBottom: '6px',
                           }}
                         >
-                          REGISTRATION FEE
+                          <span>REGISTRATION FEE</span>
+                          <span>•</span>
+                          <span style={{ color: '#00e5ff' }}>{effectiveMemberCount} {effectiveMemberCount === 1 ? 'HEAD' : 'HEADS'}</span>
                         </div>
 
                         <div
                           style={{
-                            fontSize: '2rem',
+                            fontSize: '2.1rem',
                             fontWeight: 900,
                             color: '#ffffff',
                             fontFamily: 'var(--font-title, sans-serif)',
                             lineHeight: 1,
-                            margin: '4px 0 10px 0',
+                            margin: '4px 0 6px 0',
+                            display: 'flex',
+                            alignItems: 'baseline',
+                            gap: '10px',
+                            flexWrap: 'wrap',
                           }}
                         >
-                          ₹200
+                          <span>{registrationFeeText}</span>
+                          <span style={{ fontSize: '0.82rem', color: '#ffb703', fontWeight: 700, fontFamily: 'var(--font-body, sans-serif)' }}>
+                            ({registrationFeeDetail})
+                          </span>
                         </div>
 
                         <p style={{ color: '#8e9bb4', fontSize: '0.82rem', margin: '0 0 12px 0' }}>
-                          Scan to pay exactly ₹200 with GPay, PhonePe, Paytm, or any UPI App.
+                          Scan to pay exactly <strong style={{ color: '#00e5ff' }}>{registrationFeeText}</strong> with GPay, PhonePe, Paytm, or any UPI App.
                         </p>
 
                         {/* UPI Box with Copy Button */}
@@ -2004,14 +2105,14 @@ export const EventRegistrationModal: React.FC<EventRegistrationModalProps> = ({
                         />
                         <span
                           style={{
-                            fontSize: '0.68rem',
-                            color: '#333',
-                            fontWeight: 800,
+                            fontSize: '0.72rem',
+                            color: '#111',
+                            fontWeight: 900,
                             display: 'block',
                             marginTop: '4px',
                           }}
                         >
-                          Scan & Pay ₹200
+                          Scan & Pay {registrationFeeText}
                         </span>
                         <span
                           style={{
@@ -3066,7 +3167,7 @@ export const EventRegistrationModal: React.FC<EventRegistrationModalProps> = ({
                 letterSpacing: '0.02em',
               }}
             >
-              Scan & Pay ₹200
+              Scan & Pay {registrationFeeText} ({registrationFeeDetail})
             </div>
             <div
               style={{
