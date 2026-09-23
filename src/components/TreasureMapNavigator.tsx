@@ -252,7 +252,7 @@ export const TreasureMapNavigator: React.FC<TreasureMapNavigatorProps> = ({ onOp
                 ref={expeditionVideoRef}
                 muted
                 playsInline
-                preload="auto"
+                preload="none"
                 onEnded={() => setShowExpeditionIntro(false)}
                 onError={() => setShowExpeditionIntro(false)}
                 style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}

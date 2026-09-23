@@ -106,6 +106,7 @@ export const Hero: React.FC<HeroProps> = ({ onRegisterClick, onNavigatePitch }) 
           loop
           muted
           playsInline
+          preload="metadata"
           poster="/images/hero.jpg"
           style={bgVideoSrc === 'intro' ? {
             position: 'absolute',
@@ -237,8 +238,11 @@ export const Hero: React.FC<HeroProps> = ({ onRegisterClick, onNavigatePitch }) 
           margin: '0 auto',
           padding: '80px 24px 30px 24px',
           display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'flex-start',
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '40px',
         }}
       >
         {/* ─── HERO CONTENT & ACTIONS ─── */}
@@ -541,6 +545,41 @@ export const Hero: React.FC<HeroProps> = ({ onRegisterClick, onNavigatePitch }) 
               ))}
             </div>
           </div>
+        </div>
+        
+        {/* ─── RIGHT COLUMN: SMALL PROMO BANNER ─── */}
+        <div 
+          style={{
+            flex: '0 0 auto',
+            maxWidth: '220px',
+            borderRadius: '14px',
+            padding: '4px',
+            border: '1.5px solid rgba(255, 255, 255, 0.15)',
+            boxShadow: '0 10px 30px rgba(0,0,0,0.6)',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease',
+          }}
+          onClick={onNavigatePitch}
+          onMouseEnter={(e) => { 
+            e.currentTarget.style.transform = 'scale(1.04)'; 
+            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+          }}
+          onMouseLeave={(e) => { 
+            e.currentTarget.style.transform = 'scale(1)';
+            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+          }}
+          className="hero-promo-banner"
+        >
+          <img
+            src="/images/pitch-perfect-poster.jpg"
+            alt="Pitch Perfect 26 Banner"
+            style={{
+              width: '100%',
+              height: 'auto',
+              borderRadius: '10px',
+              display: 'block',
+            }}
+          />
         </div>
       </div>
 

@@ -217,11 +217,8 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
         </nav>
 
-        {/* Action Button, Auth & Hamburger */}
+        {/* Action Button & Hamburger */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          {/* User auth menu — shows sign in/up or avatar dropdown */}
-          <UserMenu onOpenAuth={onOpenAuth || (() => {})} />
-
           <button
             onClick={onOpenRegister}
             data-cursor="register"

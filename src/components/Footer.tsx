@@ -118,7 +118,7 @@ export const Footer: React.FC = () => {
           muted
           loop
           playsInline
-          preload="auto"
+          preload="none"
           style={{
             position: 'absolute',
             inset: 0,

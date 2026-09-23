@@ -224,10 +224,17 @@ export const SITE_CONFIG: SiteConfig = {
     ],
     'project-expo': [
       {
-        name: 'JAYASRI',
-        phone: '9342481695',
-        tel: '9342481695',
-        wa: 'https://wa.me/919342481695',
+        name: 'Vinish .T',
+        phone: '9043647526',
+        tel: '9043647526',
+        wa: 'https://wa.me/919043647526',
+        role: 'Project Expo Coordinator',
+      },
+      {
+        name: 'Vishaal .M',
+        phone: '9952705113',
+        tel: '9952705113',
+        wa: 'https://wa.me/919952705113',
         role: 'Project Expo Coordinator',
       },
     ],
@@ -296,7 +303,7 @@ export const SITE_CONFIG: SiteConfig = {
     ],
     'pirate-portraits': [
       {
-        name: 'Yokesh & Seeman',
+        name: 'Yogesh .P (6374047408) & Seeman',
         phone: '+91 95009 81246',
         tel: '+919500981246',
         wa: 'https://wa.me/919500981246',
@@ -305,7 +312,7 @@ export const SITE_CONFIG: SiteConfig = {
     ],
     'grand-line-visuals': [
       {
-        name: 'Yokesh & Seeman',
+        name: 'Yogesh .P (6374047408) & Seeman',
         phone: '+91 95009 81246',
         tel: '+919500981246',
         wa: 'https://wa.me/919500981246',

@@ -638,6 +638,40 @@ body.custom-cursor-enabled [role="button"] {
   }
 }
 
+/* ══════════════════════════════════════════════
+   MOBILE PERFORMANCE SPEED BOOST
+   ══════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* 1. Hide heavy multi-layer moving background calculations */
+  .side-moving-bg {
+    display: none !important;
+  }
+
+  /* 2. Instant tap response: removes mobile 300ms tap delay */
+  a, button, [role="button"], input, select, textarea {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* 3. Native momentum scrolling */
+  body, html {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: auto !important; /* Prevents scroll hitching on mobile swipes */
+  }
+
+  /* 4. Disable expensive continuous rotating 3D animations on mobile GPU */
+  *[style*="legendVideoRotate"] {
+    animation: none !important;
+  }
+
+  /* 5. Skip rendering work for offscreen sections until approached */
+  #events, #schedule, #faq {
+    content-visibility: auto;
+    contain-intrinsic-size: 700px;
+  }
+}
+
+
 
 
 

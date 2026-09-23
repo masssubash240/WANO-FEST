@@ -30,13 +30,21 @@ export const AtmosphereParticles: React.FC = () => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    const isMobile = window.innerWidth < 768 || window.matchMedia('(pointer: coarse)').matches;
+
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
 
+    // Throttled resize for mobile — avoid layout thrashing
+    let resizeTimeout: number | null = null;
     const handleResize = () => {
-      if (!canvas) return;
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
+      if (resizeTimeout) return;
+      resizeTimeout = window.setTimeout(() => {
+        if (!canvas) return;
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+        resizeTimeout = null;
+      }, isMobile ? 300 : 100);
     };
 
     window.addEventListener('resize', handleResize);
@@ -44,8 +52,8 @@ export const AtmosphereParticles: React.FC = () => {
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReducedMotion) return;
 
-    // Create 45 ambient cinematic particles
-    const count = window.innerWidth < 768 ? 20 : 45;
+    // Drastically reduce particle count on mobile for smooth 60fps
+    const count = isMobile ? 10 : 45;
     const particles: Particle[] = [];
 
     const colors = [
@@ -73,8 +81,18 @@ export const AtmosphereParticles: React.FC = () => {
 
     let animId: number;
     let time = 0;
+    let lastFrameTime = 0;
+    // Mobile: target ~30fps (33ms), Desktop: full 60fps
+    const frameBudget = isMobile ? 33 : 0;
 
-    const render = () => {
+    const render = (timestamp: number) => {
+      // Frame rate throttle on mobile
+      if (frameBudget > 0 && timestamp - lastFrameTime < frameBudget) {
+        animId = requestAnimationFrame(render);
+        return;
+      }
+      lastFrameTime = timestamp;
+
       time += 0.015;
       ctx.clearRect(0, 0, width, height);
 
@@ -114,10 +132,12 @@ export const AtmosphereParticles: React.FC = () => {
           ctx.ellipse(0, 0, p.size, p.size * 0.5, 0, 0, Math.PI * 2);
           ctx.fill();
         } else {
-          // Ember or dust
+          // Ember or dust — disable shadowBlur on mobile (GPU-expensive)
           ctx.fillStyle = `${p.color}${p.alpha})`;
-          ctx.shadowColor = p.color.includes('217') ? '#d90429' : '#ffb703';
-          ctx.shadowBlur = p.type === 'ember' ? 6 : 0;
+          if (!isMobile) {
+            ctx.shadowColor = p.color.includes('217') ? '#d90429' : '#ffb703';
+            ctx.shadowBlur = p.type === 'ember' ? 6 : 0;
+          }
           ctx.beginPath();
           ctx.arc(0, 0, p.size, 0, Math.PI * 2);
           ctx.fill();
@@ -134,6 +154,7 @@ export const AtmosphereParticles: React.FC = () => {
     return () => {
       window.removeEventListener('resize', handleResize);
       cancelAnimationFrame(animId);
+      if (resizeTimeout) clearTimeout(resizeTimeout);
     };
   }, []);
 

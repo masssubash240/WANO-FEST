@@ -19,6 +19,7 @@ export const SideMovingBackground: React.FC = () => {
 
   return (
     <div
+      className="side-moving-bg"
       style={{
         position: 'fixed',
         inset: 0,

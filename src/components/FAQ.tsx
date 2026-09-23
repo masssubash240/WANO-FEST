@@ -16,6 +16,7 @@ export const FAQ: React.FC = () => {
         loop
         muted
         playsInline
+        preload="none"
         style={{
           position: 'absolute',
           inset: 0,

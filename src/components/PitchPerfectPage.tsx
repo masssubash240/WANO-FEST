@@ -119,6 +119,7 @@ export const PitchPerfectPage: React.FC<PitchPerfectPageProps> = ({ onBackToHome
   } | null>(null);
 
   const [copiedUpi, setCopiedUpi] = useState(false);
+  const [qrZoomOpen, setQrZoomOpen] = useState(false);
 
   // Countdown timer to 09 October 2026, 10:00 AM
   const targetTime = new Date('2026-10-09T10:00:00').getTime();
@@ -3499,6 +3500,7 @@ export const PitchPerfectPage: React.FC<PitchPerfectPageProps> = ({ onBackToHome
 
                 {/* QR Image Box */}
                 <div
+                  onClick={() => setQrZoomOpen(true)}
                   style={{
                     width: '230px',
                     height: '230px',
@@ -3512,7 +3514,12 @@ export const PitchPerfectPage: React.FC<PitchPerfectPageProps> = ({ onBackToHome
                     alignItems: 'center',
                     justifyContent: 'center',
                     overflow: 'hidden',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
                   }}
+                  title="Tap to zoom QR"
+                  onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.03)'; e.currentTarget.style.borderColor = '#5B3DF5'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.borderColor = '#cbd5e1'; }}
                 >
                   <img
                     src="/images/pitch-payment-qr.png"
@@ -4342,6 +4349,78 @@ export const PitchPerfectPage: React.FC<PitchPerfectPageProps> = ({ onBackToHome
           }
         }
       `}</style>
+
+      {/* ═══ QR ZOOM LIGHTBOX ═══ */}
+      {qrZoomOpen && (
+        <div
+          onClick={() => setQrZoomOpen(false)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 99999,
+            background: 'rgba(0, 0, 0, 0.88)',
+            backdropFilter: 'blur(12px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '24px',
+            cursor: 'zoom-out',
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              position: 'relative',
+              maxWidth: '420px',
+              width: '100%',
+              backgroundColor: '#fff',
+              borderRadius: '24px',
+              padding: '20px',
+              boxShadow: '0 30px 80px rgba(0,0,0,0.5)',
+            }}
+          >
+            <button
+              onClick={() => setQrZoomOpen(false)}
+              style={{
+                position: 'absolute',
+                top: '-14px',
+                right: '-14px',
+                width: '36px',
+                height: '36px',
+                borderRadius: '50%',
+                background: '#050505',
+                color: '#fff',
+                border: 'none',
+                fontSize: '1.1rem',
+                fontWeight: 900,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+              }}
+            >
+              ✕
+            </button>
+            <img
+              src="/images/pitch-payment-qr.png"
+              alt="UPI Payment QR Code — Enlarged"
+              style={{
+                width: '100%',
+                height: 'auto',
+                borderRadius: '16px',
+                display: 'block',
+              }}
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = '/pitch-payment-qr.png';
+              }}
+            />
+            <div style={{ textAlign: 'center', marginTop: '12px', fontSize: '0.82rem', color: '#64748b', fontWeight: 700 }}>
+              Scan with any UPI App
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -48,7 +48,7 @@ export const FinalLegendCTA: React.FC<FinalLegendCTAProps> = ({
           muted
           loop
           playsInline
-          preload="auto"
+          preload="none"
           style={{
             width: '120%',
             height: '120%',

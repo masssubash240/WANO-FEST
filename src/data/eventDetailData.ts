@@ -283,7 +283,8 @@ const events: EventSeed[] = [
     category: 'TECHNICAL — INNOVATION & PROTOTYPE',
     image: '/images/project_expo_banner.png',
     coordinator: [
-      { name: 'JAYASRI', department: 'Cybersecurity', year: 'III', role: 'Project Expo Coordinator', contact: '9342481695' }
+      { name: 'Vinish .T', department: '', year: '', role: 'Project Expo Coordinator', contact: '9043647526' },
+      { name: 'Vishaal .M', department: '', year: '', role: 'Project Expo Coordinator', contact: '9952705113' }
     ],
     crewSize: '2–4 Members',
     battleTime: 'Full Day Exhibition & Evaluation',
@@ -508,7 +509,7 @@ const events: EventSeed[] = [
     id: 'pirate-portraits', missionNumber: 'EVENT 09', title: 'Pirate Portraits', japaneseTitle: '一枚の物語 // FRAMES BEYOND BORDERS',
     tagline: 'CLICK • EXPLORE • EXPRESS • INSPIRE', missionType: 'NON-TECH', category: 'NON-TECHNICAL — PHOTOGRAPHY', image: '/images/pirate_portraits.png',
     coordinator: [
-      { name: 'Yokesh', department: 'AI & DS', year: 'II' },
+      { name: 'Yogesh .P (6374047408)', department: 'AI & DS', year: 'II' },
       { name: 'Seeman', department: 'CSE', year: 'III' }
     ],
     crewSize: 'Solo', battleTime: 'Event Period', mode: 'PHOTOGRAPHY', minMembers: 1, maxMembers: 1,
@@ -528,7 +529,7 @@ const events: EventSeed[] = [
     id: 'grand-line-visuals', missionNumber: 'EVENT 10', title: 'Grand Line Visuals', japaneseTitle: '映像の航海 // VIDEOGRAPHY EVENT',
     tagline: 'FRAMES • STORIES • BEYOND BORDERS', missionType: 'NON-TECH', category: 'NON-TECHNICAL — VIDEOGRAPHY', image: '/images/grand_line_visuals.png',
     coordinator: [
-      { name: 'Yokesh', department: 'AI & DS', year: 'II' },
+      { name: 'Yogesh .P (6374047408)', department: 'AI & DS', year: 'II' },
       { name: 'Seeman', department: 'CSE', year: 'III' }
     ],
     crewSize: 'Solo / Duo', battleTime: 'To Be Announced', mode: 'VIDEOGRAPHY', minMembers: 1, maxMembers: 2,
