@@ -237,22 +237,26 @@ const PosterCard: React.FC<CardProps> = ({ event, onOpenDetail, onRegister }) =>
               </span>
             </div>
 
-            {/* Prize Badge */}
-            {event.prize && (
-              <span
-                style={{
-                  padding: '5px 14px',
-                  borderRadius: '16px',
-                  fontSize: '0.78rem',
-                  fontWeight: 900,
-                  backgroundColor: '#ffb703',
-                  color: '#06080e',
-                  boxShadow: '0 0 15px rgba(255, 183, 3, 0.6)',
-                }}
-              >
-                {event.prize}
-              </span>
-            )}
+            {/* Registration Fee & All Events Access Badge */}
+            <span
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px',
+                padding: '5px 12px',
+                borderRadius: '16px',
+                fontSize: '0.74rem',
+                fontWeight: 900,
+                backgroundColor: '#ffb703',
+                color: '#06080e',
+                boxShadow: '0 0 16px rgba(255, 183, 3, 0.65)',
+                letterSpacing: '0.03em',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <span>🎟️</span>
+              <span>REGISTER ₹200 • ALL EVENTS</span>
+            </span>
           </div>
         </div>
 
@@ -401,8 +405,18 @@ const PosterCard: React.FC<CardProps> = ({ event, onOpenDetail, onRegister }) =>
                   Team: {event.teamSize}
                 </span>
               </div>
-              <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
-                📍 {event.venue || 'To Be Announced'}
+              <span
+                style={{
+                  fontSize: '0.74rem',
+                  fontWeight: 800,
+                  color: '#ffb703',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                }}
+              >
+                <span>⚡</span>
+                <span>PARTICIPATE IN ALL EVENTS</span>
               </span>
             </div>
 
@@ -665,6 +679,53 @@ export const FeaturedEvents: React.FC<FeaturedEventsProps> = ({
               {tab.label}
             </button>
           ))}
+        </div>
+
+        {/* All Events Access Callout Banner */}
+        <div>
+          <div
+            style={{
+              margin: '22px auto 0 auto',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '12px',
+              flexWrap: 'wrap',
+              padding: '10px 26px',
+              borderRadius: '50px',
+              background: 'linear-gradient(135deg, rgba(255, 183, 3, 0.16) 0%, rgba(0, 229, 255, 0.16) 100%)',
+              border: '1.5px solid rgba(255, 183, 3, 0.55)',
+              boxShadow: '0 0 25px rgba(255, 183, 3, 0.25), inset 0 0 15px rgba(0, 229, 255, 0.1)',
+              backdropFilter: 'blur(12px)',
+            }}
+          >
+            <span style={{ fontSize: '1.25rem' }}>🔥</span>
+            <span
+              style={{
+                fontFamily: 'var(--font-heading, system-ui, sans-serif)',
+                fontSize: '0.96rem',
+                fontWeight: 900,
+                color: '#ffffff',
+                letterSpacing: '0.04em',
+              }}
+            >
+              REGISTER <span style={{ color: '#ffb703', fontSize: '1.18rem', textShadow: '0 0 12px rgba(255, 183, 3, 0.6)' }}>₹200</span> &mdash; PARTICIPATE IN <span style={{ color: '#00e5ff', textShadow: '0 0 12px rgba(0, 229, 255, 0.6)' }}>ALL EVENTS!</span>
+            </span>
+            <span
+              style={{
+                padding: '3px 12px',
+                borderRadius: '20px',
+                background: '#ffb703',
+                color: '#06080e',
+                fontSize: '0.72rem',
+                fontWeight: 900,
+                letterSpacing: '0.08em',
+                textTransform: 'uppercase',
+              }}
+            >
+              All-Access Pass
+            </span>
+          </div>
         </div>
       </div>
 

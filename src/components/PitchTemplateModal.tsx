@@ -17,7 +17,7 @@ export interface SlideTemplate {
   suggestedElements: string[];
 }
 
-export const SLIDE_TEMPLATES: SlideTemplate[] = [
+const SLIDE_TEMPLATES: SlideTemplate[] = [
   {
     slideNumber: 1,
     title: 'TITLE SLIDE — YOUR TEAM NAME, YOUR IDEA TITLE',

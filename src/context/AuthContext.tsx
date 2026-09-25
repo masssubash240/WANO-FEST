@@ -28,6 +28,7 @@ const AuthContext = createContext<AuthContextValue>({
   isAuthenticated: false,
 });
 
+// oxlint-disable-next-line react/only-export-components
 export const useAuth = () => useContext(AuthContext);
 
 /** Convert a Supabase User object to our AuthUser shape */

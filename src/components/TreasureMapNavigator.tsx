@@ -141,13 +141,13 @@ const ISLANDS: IslandNode[] = [
 export const TreasureMapNavigator: React.FC<TreasureMapNavigatorProps> = ({ onOpenEventDetail }) => {
   const [selectedIslandId, setSelectedIslandId] = useState<string>('will-of-d');
   const [hoveredIslandId, setHoveredIslandId] = useState<string | null>(null);
-  const [compassAngle, setCompassAngle] = useState(45);
-  const [shipPosition, setShipPosition] = useState({ x: 10, y: 65 });
   const [showExpeditionIntro, setShowExpeditionIntro] = useState(true);
   const expeditionVideoRef = useRef<HTMLVideoElement | null>(null);
   const expeditionSectionRef = useRef<HTMLElement | null>(null);
 
   const activeIsland = ISLANDS.find(i => i.id === (hoveredIslandId || selectedIslandId)) || ISLANDS[0];
+  const shipPosition = { x: activeIsland.x, y: activeIsland.y };
+  const compassAngle = (activeIsland.order * 37) % 360;
 
   // Play the supplied Grand Line expedition video when this section enters the viewport.
   useEffect(() => {
@@ -166,13 +166,6 @@ export const TreasureMapNavigator: React.FC<TreasureMapNavigatorProps> = ({ onOp
     observer.observe(section);
     return () => observer.disconnect();
   }, []);
-
-  // Update ship position and compass angle when active island changes
-  useEffect(() => {
-    setShipPosition({ x: activeIsland.x, y: activeIsland.y });
-    const angle = (activeIsland.order * 37) % 360;
-    setCompassAngle(angle);
-  }, [activeIsland]);
 
   const handleIslandClick = (island: IslandNode, e: React.MouseEvent<HTMLButtonElement>) => {
     setSelectedIslandId(island.id);

@@ -131,6 +131,7 @@ export interface DetailedEventData {
     year: string;
     contact?: string;
     role?: string;
+    photo?: string;
   }[];
   judgingRubric?: {
     criterion: string;
@@ -509,8 +510,8 @@ const events: EventSeed[] = [
     id: 'pirate-portraits', missionNumber: 'EVENT 09', title: 'Pirate Portraits', japaneseTitle: '一枚の物語 // FRAMES BEYOND BORDERS',
     tagline: 'CLICK • EXPLORE • EXPRESS • INSPIRE', missionType: 'NON-TECH', category: 'NON-TECHNICAL — PHOTOGRAPHY', image: '/images/pirate_portraits.png',
     coordinator: [
-      { name: 'Yogesh .P (6374047408)', department: 'AI & DS', year: 'II' },
-      { name: 'Seeman', department: 'CSE', year: 'III' }
+      { name: 'Yogesh .P (6374047408)', department: 'AI & DS', year: 'II', photo: '/images/yogesh.jpg' },
+      { name: 'Seeman', department: 'CSE', year: 'III', photo: '/images/seeman.png' }
     ],
     crewSize: 'Solo', battleTime: 'Event Period', mode: 'PHOTOGRAPHY', minMembers: 1, maxMembers: 1,
     description: 'Capture moments, people, places and stories around the college event using a mobile phone or digital camera while following the originality and privacy rules.',
@@ -529,8 +530,8 @@ const events: EventSeed[] = [
     id: 'grand-line-visuals', missionNumber: 'EVENT 10', title: 'Grand Line Visuals', japaneseTitle: '映像の航海 // VIDEOGRAPHY EVENT',
     tagline: 'FRAMES • STORIES • BEYOND BORDERS', missionType: 'NON-TECH', category: 'NON-TECHNICAL — VIDEOGRAPHY', image: '/images/grand_line_visuals.png',
     coordinator: [
-      { name: 'Yogesh .P (6374047408)', department: 'AI & DS', year: 'II' },
-      { name: 'Seeman', department: 'CSE', year: 'III' }
+      { name: 'Yogesh .P (6374047408)', department: 'AI & DS', year: 'II', photo: '/images/yogesh.jpg' },
+      { name: 'Seeman', department: 'CSE', year: 'III', photo: '/images/seeman.png' }
     ],
     crewSize: 'Solo / Duo', battleTime: 'To Be Announced', mode: 'VIDEOGRAPHY', minMembers: 1, maxMembers: 2,
     description: 'Capture the symposium through moving images, focusing on people, places, moments, storytelling and creative visual perspectives.',

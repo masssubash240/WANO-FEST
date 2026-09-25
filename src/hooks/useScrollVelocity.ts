@@ -66,29 +66,48 @@ export function useScrollVelocity(): ScrollMetrics {
       }
     };
 
+    let lastScrollYVal = -1;
+    let lastVelocityVal = -1;
+    let lastIsScrolling = false;
+
     // Smooth physics loop with RAF
     const tick = () => {
       if (!prefersReducedMotion) {
         // Exponential lerp dampening
         smoothedVelocity.current += (rawVelocity.current - smoothedVelocity.current) * 0.18;
+        if (Math.abs(smoothedVelocity.current) < 0.02) {
+          smoothedVelocity.current = 0;
+        }
 
         const currentScrollY = window.scrollY || window.pageYOffset;
-        const docHeight = Math.max(
-          document.body.scrollHeight,
-          document.documentElement.scrollHeight
-        ) - window.innerHeight;
-        const progress = docHeight > 0 ? Math.min(1, Math.max(0, currentScrollY / docHeight)) : 0;
+        const roundedVel = Math.round(smoothedVelocity.current * 100) / 100;
         const isScrolling = Math.abs(smoothedVelocity.current) > 0.15;
-        const direction = smoothedVelocity.current > 0.2 ? 'down' : smoothedVelocity.current < -0.2 ? 'up' : 'idle';
 
-        setMetrics({
-          scrollY: currentScrollY,
-          velocity: Math.round(smoothedVelocity.current * 100) / 100,
-          rawVelocity: rawVelocity.current,
-          direction,
-          progress,
-          isScrolling,
-        });
+        if (
+          currentScrollY !== lastScrollYVal ||
+          roundedVel !== lastVelocityVal ||
+          isScrolling !== lastIsScrolling
+        ) {
+          lastScrollYVal = currentScrollY;
+          lastVelocityVal = roundedVel;
+          lastIsScrolling = isScrolling;
+
+          const docHeight = Math.max(
+            document.body.scrollHeight,
+            document.documentElement.scrollHeight
+          ) - window.innerHeight;
+          const progress = docHeight > 0 ? Math.min(1, Math.max(0, currentScrollY / docHeight)) : 0;
+          const direction = smoothedVelocity.current > 0.2 ? 'down' : smoothedVelocity.current < -0.2 ? 'up' : 'idle';
+
+          setMetrics({
+            scrollY: currentScrollY,
+            velocity: roundedVel,
+            rawVelocity: rawVelocity.current,
+            direction,
+            progress,
+            isScrolling,
+          });
+        }
       }
 
       rafId.current = requestAnimationFrame(tick);

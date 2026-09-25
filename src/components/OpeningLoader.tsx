@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { startGlobalAmbientAudio } from './GlobalAmbientAudio';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { startGlobalAmbientAudio } from '../utils/ambientAudio';
 
 interface OpeningLoaderProps {
   onComplete: () => void;
@@ -16,11 +16,11 @@ export const OpeningLoader: React.FC<OpeningLoaderProps> = ({ onComplete }) => {
     setSoundUnlocked(true);
   };
 
-  const complete = () => {
+  const complete = useCallback(() => {
     if (completedRef.current) return;
     completedRef.current = true;
     onComplete();
-  };
+  }, [onComplete]);
 
   const apply2xSpeed = () => {
     if (videoRef.current) {
@@ -33,7 +33,7 @@ export const OpeningLoader: React.FC<OpeningLoaderProps> = ({ onComplete }) => {
     // Safety fallback in case the browser blocks video playback or does not emit ended (reduced for 2x speed)
     const fallback = window.setTimeout(complete, 7000);
     return () => window.clearTimeout(fallback);
-  }, []);
+  }, [complete]);
 
   return (
     <div

@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Globe, MapPin, Mail, MessageCircle } from 'lucide-react';
+import { Globe, MapPin, Mail } from 'lucide-react';
 import { InstagramIcon as Instagram, YoutubeIcon as Youtube } from './SocialIcons';
 import { SITE_CONFIG } from '../data/siteConfig';
 

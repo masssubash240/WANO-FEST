@@ -73,7 +73,7 @@ app.post("/api/register", async (req, res) => {
           ? JSON.parse(req.body)
           : req.body;
 
-    } catch (error) {
+    } catch (_error) {
 
       return res.status(400).json({
         success: false,
@@ -373,7 +373,7 @@ app.post("/api/register", async (req, res) => {
       result =
         JSON.parse(responseText);
 
-    } catch (error) {
+    } catch (_error) {
 
       return res.status(502).json({
 
@@ -487,7 +487,7 @@ app.use(
     error,
     req,
     res,
-    next
+    _next
   ) => {
 
     console.error(

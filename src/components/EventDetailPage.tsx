@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { DETAILED_EVENTS } from '../data/eventDetailData';
 import type { DetailedEventData } from '../data/eventDetailData';
 
@@ -23,6 +23,7 @@ export const EventDetailPage: React.FC<EventDetailPageProps> = ({
   // ─────────────────────────────────────────────────────────────
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [isLoadingComplete, setIsLoadingComplete] = useState(false);
+  const missionAcceptedToken = useMemo(() => Math.floor(100000 + Math.random() * 900000), [eventId]);
   const [isMaskTransitioning, setIsMaskTransitioning] = useState(false);
 
   useEffect(() => {
@@ -68,11 +69,9 @@ export const EventDetailPage: React.FC<EventDetailPageProps> = ({
   const [cursorPos, setCursorPos] = useState({ x: -100, y: -100 });
   const [cursorText, setCursorText] = useState('');
   const [isCursorHovering, setIsCursorHovering] = useState(false);
-  const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const [isTouchDevice] = useState(() => typeof window !== 'undefined' ? ('ontouchstart' in window || (navigator.maxTouchPoints || 0) > 0) : false);
 
   useEffect(() => {
-    setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
-
     const handleScroll = () => {
       setScrollY(window.scrollY);
     };
@@ -2933,7 +2932,25 @@ export const EventDetailPage: React.FC<EventDetailPageProps> = ({
                     boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5)'
                   }}
                 >
-                  <div style={{ fontSize: '2rem', marginBottom: '8px' }}>👤</div>
+                  {c.photo ? (
+                    <div style={{ marginBottom: '12px' }}>
+                      <img
+                        src={c.photo}
+                        alt={c.name}
+                        style={{
+                          width: '180px',
+                          height: '180px',
+                          borderRadius: '50%',
+                          objectFit: 'cover',
+                          objectPosition: 'top center',
+                          border: '3px solid rgba(212, 175, 55, 0.6)',
+                          boxShadow: '0 0 28px rgba(212, 175, 55, 0.4)',
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <div style={{ fontSize: '2rem', marginBottom: '8px' }}>👤</div>
+                  )}
                   <h4 style={{ fontFamily: "'Russo One', sans-serif", fontSize: '1.2rem', color: '#f8fafc', margin: '0 0 4px 0' }}>
                     {c.name}
                   </h4>
@@ -3515,7 +3532,7 @@ export const EventDetailPage: React.FC<EventDetailPageProps> = ({
                     color: '#00e5ff'
                   }}
                 >
-                  WANO-TOKEN-#{Math.floor(100000 + Math.random() * 900000)}
+                  WANO-TOKEN-#{missionAcceptedToken}
                 </div>
               </div>
             )}

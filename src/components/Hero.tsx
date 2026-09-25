@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useScrollVelocity } from '../hooks/useScrollVelocity';
-import { setGlobalAmbientMuted, startGlobalAmbientAudio } from './GlobalAmbientAudio';
+import { setGlobalAmbientMuted, startGlobalAmbientAudio } from '../utils/ambientAudio';
 
 interface HeroProps {
   onRegisterClick: () => void;
@@ -8,7 +8,7 @@ interface HeroProps {
   onNavigatePitch?: () => void;
 }
 
-export const Hero: React.FC<HeroProps> = ({ onRegisterClick, onNavigatePitch }) => {
+export const Hero: React.FC<HeroProps> = ({ onRegisterClick, onNavigatePitch, onSelectCategory: _onSelectCategory }) => {
   // Countdown to October 9, 2026
   const targetDate = new Date('2026-10-09T09:00:00').getTime();
   const [timeLeft, setTimeLeft] = useState({

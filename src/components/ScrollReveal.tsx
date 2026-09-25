@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 interface ScrollRevealProps {
   children: React.ReactNode;
@@ -23,13 +23,13 @@ export const ScrollReveal: React.FC<ScrollRevealProps> = ({
   style,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
   const reduced = typeof window !== "undefined"
     ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
     : false;
+  const [visible, setVisible] = useState(() => reduced);
 
   useEffect(() => {
-    if (reduced) { setVisible(true); return; }
+    if (reduced) return;
     const el = ref.current;
     if (!el) return;
     const obs = new IntersectionObserver(

@@ -219,6 +219,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Action Button & Hamburger */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <UserMenu onOpenAuth={onOpenAuth} />
           <button
             onClick={onOpenRegister}
             data-cursor="register"
@@ -337,6 +338,32 @@ export const Navbar: React.FC<NavbarProps> = ({
           >
             🚀 PITCH PERFECT ’26 (₹200)
           </button>
+          {onOpenAuth && (
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                onOpenAuth('login');
+              }}
+              style={{
+                padding: '10px 16px',
+                borderRadius: '20px',
+                background: 'rgba(0, 229, 255, 0.12)',
+                border: '1px solid rgba(0, 229, 255, 0.4)',
+                color: '#00e5ff',
+                fontWeight: 800,
+                fontSize: '0.9rem',
+                textAlign: 'center',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+              }}
+            >
+              <span>👤</span>
+              <span>LOGIN / ACCOUNT</span>
+            </button>
+          )}
         </div>
       )}
 

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
+import { supabase, pitchSupabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
 
 interface EventRegistrationModalProps {
@@ -10,14 +10,16 @@ interface EventRegistrationModalProps {
   initialMode?: 'register' | 'auth';
 }
 
-export const GOOGLE_SCRIPT_URL =
+const GOOGLE_SCRIPT_URL =
+  (import.meta.env.VITE_GOOGLE_SCRIPT_URL as string) ||
   'https://script.google.com/macros/s/AKfycbzyC_jUvtA94ZzpvOhk3HIFNHZ1-RZDBS8FYXwHyGtFzEFcrXPJbrOcM-1B2qiDOyXV/exec';
 
-export const PITCH_GOOGLE_SCRIPT_URL =
-  'https://script.google.com/macros/s/AKfycbxdGPR5FNlI38fNZo3Q6KjmGHoVdI_f2yZ_b8feevHnJNlXVE8SU1sU28mcII4x9EcW/exec';
+const PITCH_GOOGLE_SCRIPT_URL =
+  (import.meta.env.VITE_PITCH_GOOGLE_SCRIPT_URL as string) ||
+  'https://script.google.com/macros/s/AKfycby_hNEGoTBgYdEsE5eGw8FkjhGhV3TK_-FkRIviRZJX7b7prUvBB-6GRRoQx6DfHVDN/exec';
 
 // Events mapping exactly matching HTML and App structure
-export const EVENT_OPTIONS = {
+const EVENT_OPTIONS = {
   technical: [
     { value: "Pitch Perfect '26", label: "Pitch Perfect '26 (Think Big • Pitch Bold • ₹20K Cash)" },
     { value: 'Capture the Flag', label: 'Capture the Flag (CTF Security)' },
@@ -37,6 +39,49 @@ export const EVENT_OPTIONS = {
     { value: 'Short Film', label: 'Short Film (Straw Hat Studio)' },
     { value: 'E-Sports', label: 'E-Sports Arena (Gaming Championship)' },
   ],
+};
+
+const SUPABASE_EVENT_MAP: Record<string, string> = {
+  'capture the flag': '6a55cef0-d253-4b38-bded-ff6f8c01904d',
+  'coding challenge': '87e8098f-6982-444f-b0ab-f469ddde4c6b',
+  'ai prompt': '0a82da74-88b8-44f0-b548-23a49f9b3868',
+  'ui/ux challenge': '567603eb-c666-486f-9a23-38711b932485',
+  'project expo': 'c99a5091-431b-441f-be41-cbeb7b4386de',
+  'paper presentation': 'b06d973d-cc64-4e61-9b27-6543b8edb689',
+  'treasure hunt': '23371ba2-991b-4c54-9346-803844a51a0a',
+  'dance': '517fd861-66f9-47e9-a683-180cae6a6932',
+  'singing': '4d8a6863-0cff-4154-a050-88218ae06f01',
+  'photography': 'b67c9eaf-f766-4f69-9f34-847fbed33105',
+  'videography': 'e0e85e80-5cca-433f-9aab-9148922b34d4',
+  'short film': '2fb71c45-3711-48b2-b97e-95969643f1b4',
+};
+
+const findMatchedEventId = async (eventName: string, eventType: string): Promise<string | null> => {
+  const norm = (eventName || '').toLowerCase().trim();
+  try {
+    const { data: dbEvents } = await supabase.from('events').select('id, event_name, slug');
+    if (dbEvents && dbEvents.length > 0) {
+      const found = dbEvents.find((e) =>
+        norm.includes(e.event_name.toLowerCase()) ||
+        e.event_name.toLowerCase().includes(norm) ||
+        norm.includes(e.slug)
+      );
+      if (found) return found.id;
+      for (const [key, uuid] of Object.entries(SUPABASE_EVENT_MAP)) {
+        if (norm.includes(key) || key.includes(norm)) {
+          const exists = dbEvents.some((e) => e.id === uuid);
+          if (exists) return uuid;
+        }
+      }
+      return dbEvents[0].id;
+    }
+  } catch {
+    // fallback
+  }
+  for (const [key, uuid] of Object.entries(SUPABASE_EVENT_MAP)) {
+    if (norm.includes(key) || key.includes(norm)) return uuid;
+  }
+  return null;
 };
 
 export const EventRegistrationModal: React.FC<EventRegistrationModalProps> = ({
@@ -159,22 +204,26 @@ export const EventRegistrationModal: React.FC<EventRegistrationModalProps> = ({
   const [authSuccess, setAuthSuccess] = useState<string | null>(null);
   const [showAuthPassword, setShowAuthPassword] = useState(false);
 
-  useEffect(() => {
+  const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
+  const [prevInitialMode, setPrevInitialMode] = useState(initialMode);
+  if (isOpen !== prevIsOpen || initialMode !== prevInitialMode) {
+    setPrevIsOpen(isOpen);
+    setPrevInitialMode(initialMode);
     if (isOpen && initialMode) {
       setActiveMode(initialMode);
     }
-  }, [isOpen, initialMode]);
+  }
 
   // Pre-fill leader information if user is logged in
-  useEffect(() => {
-    if (user) {
-      setFormData((prev) => ({
-        ...prev,
-        leader: prev.leader || user.name || '',
-        leaderEmail: prev.leaderEmail || user.email || '',
-      }));
-    }
-  }, [user]);
+  const [prevUser, setPrevUser] = useState(user);
+  if (user && user !== prevUser) {
+    setPrevUser(user);
+    setFormData((prev) => ({
+      ...prev,
+      leader: prev.leader || user.name || '',
+      leaderEmail: prev.leaderEmail || user.email || '',
+    }));
+  }
 
   const handleGoogleSignIn = async () => {
     setAuthError(null);
@@ -391,7 +440,11 @@ export const EventRegistrationModal: React.FC<EventRegistrationModalProps> = ({
   };
 
   // Update preselected event if passed
-  useEffect(() => {
+  const [prevPreselectedEvent, setPrevPreselectedEvent] = useState(preselectedEventName);
+  const [prevPreselectedType, setPrevPreselectedType] = useState(preselectedEventType);
+  if (preselectedEventName !== prevPreselectedEvent || preselectedEventType !== prevPreselectedType) {
+    setPrevPreselectedEvent(preselectedEventName);
+    setPrevPreselectedType(preselectedEventType);
     if (preselectedEventName) {
       setFormData((prev) => ({
         ...prev,
@@ -399,7 +452,7 @@ export const EventRegistrationModal: React.FC<EventRegistrationModalProps> = ({
         eventType: preselectedEventType || prev.eventType,
       }));
     }
-  }, [preselectedEventName, preselectedEventType]);
+  }
 
   // Close QR zoom lightbox with Escape key (capture phase, stops other handlers)
   // NOTE: must be declared BEFORE the `if (!isOpen) return null` early return below,
@@ -741,43 +794,84 @@ export const EventRegistrationModal: React.FC<EventRegistrationModalProps> = ({
         console.warn('Google Script fetch note (CORS redirect): using verified registration token', postErr);
       }
 
-      // 4. Save to Supabase (dual-save alongside Excel)
+      // 4. Save to Supabase (exact schema mapping & team_members relational insert)
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        await supabase.from('registrations').insert([{
-          registration_id: finalRegId,
-          team_name: payload.teamName,
-          event_type: payload.eventType,
-          event_name: payload.eventName,
-          college: payload.college,
-          department: payload.department,
-          leader_name: payload.leader,
-          leader_email: payload.leaderEmail,
-          leader_phone: payload.leaderPhone,
-          leader_department: payload.leaderDepartment,
-          leader_year: payload.leaderYear,
-          member1_name: payload.member1Name, member1_email: payload.member1Email,
-          member1_phone: payload.member1Phone, member1_department: payload.member1Department,
-          member1_year: payload.member1Year,
-          member2_name: payload.member2Name, member2_email: payload.member2Email,
-          member2_phone: payload.member2Phone, member2_department: payload.member2Department,
-          member2_year: payload.member2Year,
-          member3_name: payload.member3Name, member3_email: payload.member3Email,
-          member3_phone: payload.member3Phone, member3_department: payload.member3Department,
-          member3_year: payload.member3Year,
-          member4_name: payload.member4Name, member4_email: payload.member4Email,
-          member4_phone: payload.member4Phone, member4_department: payload.member4Department,
-          member4_year: payload.member4Year,
-          project_title: payload.projectTitle,
-          description: payload.description,
-          transaction_id: payload.transactionId,
-          payment_screenshot_name: screenshotFile?.name || (isSkippingPayment ? 'PAY-AT-VENUE' : 'NONE'),
-          user_id: session?.user?.id ?? null,
-          submitted_at: new Date().toISOString(),
-        }]);
-        console.log('✅ Saved to Supabase:', finalRegId);
+        const targetClient = isPitchEvent ? pitchSupabase : supabase;
+        const { data: { session } } = await targetClient.auth.getSession();
+        const matchedEventId = await findMatchedEventId(payload.eventName, payload.eventType);
+
+        let { data: createdReg, error: regError } = await targetClient
+          .from('registrations')
+          .insert([{
+            registration_id: finalRegId,
+            event_id: matchedEventId,
+            event_type: payload.eventType || 'technical',
+            team_name: payload.teamName?.trim() || 'Solo Participant',
+            college_name: payload.college?.trim() || 'SSREC',
+            department: payload.department?.trim() || 'Not Specified',
+            leader_name: payload.leader?.trim() || 'Participant',
+            leader_email: payload.leaderEmail?.trim() || '',
+            leader_phone: payload.leaderPhone?.trim() || '',
+            leader_department: payload.leaderDepartment?.trim() || payload.department?.trim() || 'General',
+            leader_year: payload.leaderYear || '3rd Year',
+            project_title: payload.projectTitle?.trim() || 'General Entry',
+            project_description: payload.description?.trim() || 'No description provided.',
+            transaction_id: payload.transactionId?.trim() || (isSkippingPayment ? 'PAY-AT-VENUE' : 'NONE'),
+            payment_screenshot_url: screenshotFile?.name || (isSkippingPayment ? 'PAY-AT-VENUE' : 'NONE'),
+            payment_status: 'PENDING',
+            user_id: session?.user?.id ?? null,
+          }])
+          .select('id')
+          .single();
+
+        // Fallback for Pitch project if it uses pitch_registrations table
+        if (regError && isPitchEvent && regError.message.includes('registrations')) {
+          const fallback = await targetClient.from('pitch_registrations').insert([{
+            team_name: payload.teamName,
+            college_name: payload.college,
+            leader_email: payload.leaderEmail,
+            project_title: payload.projectTitle,
+            transaction_id: payload.transactionId,
+            payment_status: 'PENDING',
+          }]).select('id').single();
+          if (!fallback.error) {
+            createdReg = fallback.data;
+            regError = null;
+          }
+        }
+
+        if (regError) {
+          console.warn('Supabase registration insert note:', regError.message);
+        } else if (createdReg?.id) {
+          console.log('✅ Saved to Supabase registrations table:', finalRegId, createdReg.id);
+
+          // Insert team members into team_members table
+          const membersToInsert = [
+            { name: payload.member1Name, email: payload.member1Email, phone: payload.member1Phone, dept: payload.member1Department, yr: payload.member1Year },
+            { name: payload.member2Name, email: payload.member2Email, phone: payload.member2Phone, dept: payload.member2Department, yr: payload.member2Year },
+            { name: payload.member3Name, email: payload.member3Email, phone: payload.member3Phone, dept: payload.member3Department, yr: payload.member3Year },
+            { name: payload.member4Name, email: payload.member4Email, phone: payload.member4Phone, dept: payload.member4Department, yr: payload.member4Year },
+          ].filter((m) => m.name && m.name.trim().length > 0);
+
+          if (membersToInsert.length > 0) {
+            const { error: tmError } = await targetClient
+              .from('team_members')
+              .insert(
+                membersToInsert.map((m, idx) => ({
+                  registration_id: createdReg.id,
+                  member_number: idx + 1,
+                  full_name: m.name.trim(),
+                  email: m.email?.trim() || null,
+                  phone: m.phone?.trim() || null,
+                  department: m.dept?.trim() || null,
+                  year: m.yr || null,
+                }))
+              );
+            if (tmError) console.warn('Supabase team_members insert note:', tmError.message);
+            else console.log(`✅ Saved ${membersToInsert.length} member(s) to team_members table`);
+          }
+        }
       } catch (sbErr) {
-        // Non-fatal: Excel save already succeeded
         console.warn('Supabase save warning:', sbErr);
       }
 
@@ -925,7 +1019,7 @@ export const EventRegistrationModal: React.FC<EventRegistrationModalProps> = ({
                   letterSpacing: '0.02em',
                 }}
               >
-                Sri Sai Ranganathan Engineering College • Excel / Google Sheets Sync
+                Sri Sai Ranganathan Engineering College • Official Registration Portal
               </p>
             </div>
           </div>
@@ -1049,7 +1143,7 @@ export const EventRegistrationModal: React.FC<EventRegistrationModalProps> = ({
                   marginBottom: '16px',
                 }}
               >
-                ✓ SUBMISSION CONFIRMED & RECORDED IN SPREADSHEET
+                ✓ REGISTRATION CONFIRMED
               </div>
 
               <h2
@@ -1064,7 +1158,7 @@ export const EventRegistrationModal: React.FC<EventRegistrationModalProps> = ({
               </h2>
 
               <p style={{ color: '#8e9bb4', fontSize: '0.92rem', maxWidth: '520px', margin: '0 auto 24px auto' }}>
-                Your team registration has been securely logged into the SSREC event database and Google Sheets Excel archive.
+                Your team registration has been securely registered in the official SSREC symposium database.
               </p>
 
               {/* Official Credential Card */}
@@ -2406,11 +2500,11 @@ export const EventRegistrationModal: React.FC<EventRegistrationModalProps> = ({
                                 animation: 'spin 0.8s linear infinite',
                               }}
                             />
-                            <span>Submitting to Sheets / Excel...</span>
+                            <span>Submitting...</span>
                           </>
                         ) : (
                           <>
-                            <span>Submit Registration & Save</span>
+                            <span>Submit Registration</span>
                             <span>➔</span>
                           </>
                         )}
@@ -2539,7 +2633,7 @@ export const EventRegistrationModal: React.FC<EventRegistrationModalProps> = ({
                       ⚡ DUAL-PERSISTENCE SYNC
                     </div>
                     <div style={{ fontSize: '0.78rem', color: 'rgba(255, 255, 255, 0.7)', lineHeight: 1.5 }}>
-                      When you submit team registrations, they are directly recorded into Google Sheets (Excel) and securely tied to your Supabase ID (<code style={{ color: '#ffb703' }}>{user.id.slice(0, 8)}...</code>).
+                      When you submit team registrations, they are securely recorded into the official SSREC symposium database and tied to your account (<code style={{ color: '#ffb703' }}>{user.id.slice(0, 8)}...</code>).
                     </div>
                   </div>
 

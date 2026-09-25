@@ -1,37 +1,11 @@
 import React, { useEffect } from 'react';
-
-let sharedAudio: HTMLAudioElement | null = null;
-let listenersInstalled = false;
-
-// This is the audio track supplied by the user for the website-wide ambience.
-const AUDIO_SRC = '/media/user-uploaded-wano-fest-audio.mp3';
-const AUDIO_VOLUME = 0.40;
-
-const ensureAudio = () => {
-  if (typeof window === 'undefined') return null;
-  if (!sharedAudio) {
-    sharedAudio = new Audio(AUDIO_SRC);
-    sharedAudio.loop = true;
-    sharedAudio.preload = 'auto';
-    sharedAudio.volume = AUDIO_VOLUME;
-    sharedAudio.setAttribute('aria-hidden', 'true');
-  }
-  return sharedAudio;
-};
-
-export const startGlobalAmbientAudio = () => {
-  const audio = ensureAudio();
-  if (!audio) return Promise.resolve();
-  audio.volume = AUDIO_VOLUME;
-  return audio.play().catch(() => undefined);
-};
-
-export const setGlobalAmbientMuted = (muted: boolean) => {
-  const audio = ensureAudio();
-  if (!audio) return;
-  audio.muted = muted;
-  if (!muted) void startGlobalAmbientAudio();
-};
+import {
+  ensureAudio,
+  startGlobalAmbientAudio,
+  setGlobalAmbientMuted,
+  isListenersInstalled,
+  setListenersInstalled,
+} from '../utils/ambientAudio';
 
 export const GlobalAmbientAudio: React.FC = () => {
   useEffect(() => {
@@ -45,14 +19,14 @@ export const GlobalAmbientAudio: React.FC = () => {
     // Autoplay with sound is normally blocked until the visitor interacts.
     tryStart();
 
-    if (!listenersInstalled) {
-      listenersInstalled = true;
+    if (!isListenersInstalled()) {
+      setListenersInstalled(true);
       const unlock = () => {
         tryStart();
         window.removeEventListener('pointerdown', unlock);
         window.removeEventListener('keydown', unlock);
         window.removeEventListener('touchstart', unlock);
-        listenersInstalled = false;
+        setListenersInstalled(false);
       };
       window.addEventListener('pointerdown', unlock, { passive: true });
       window.addEventListener('keydown', unlock);

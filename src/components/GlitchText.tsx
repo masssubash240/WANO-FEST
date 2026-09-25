@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 
 const GLITCH_CHARS = "!@#$%^&*<>?|\\[]{}ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
@@ -28,9 +28,9 @@ export const GlitchText: React.FC<GlitchTextProps> = ({
   const [displayed, setDisplayed] = useState(text);
   const frameRef = useRef<number | null>(null);
   const startRef = useRef<number | null>(null);
-  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const reduced = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  const decode = () => {
+  const decode = useCallback(() => {
     if (reduced) { setDisplayed(text); return; }
 
     const start = performance.now();
@@ -64,7 +64,7 @@ export const GlitchText: React.FC<GlitchTextProps> = ({
 
     if (frameRef.current) cancelAnimationFrame(frameRef.current);
     frameRef.current = requestAnimationFrame(step);
-  };
+  }, [text, duration, reduced]);
 
   useEffect(() => {
     if (autoPlay) {
@@ -74,7 +74,7 @@ export const GlitchText: React.FC<GlitchTextProps> = ({
         if (frameRef.current) cancelAnimationFrame(frameRef.current);
       };
     }
-  }, [text]);
+  }, [autoPlay, decode]);
 
   return (
     <Tag

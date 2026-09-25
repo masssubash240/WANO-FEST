@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { PitchTemplateModal } from './PitchTemplateModal';
+import { saveRegistrationToSupabase } from '../services/registrationService';
 
 interface PitchPerfectPageProps {
   onBackToHome: () => void;
@@ -60,7 +61,7 @@ export const PitchPerfectPage: React.FC<PitchPerfectPageProps> = ({ onBackToHome
   const cursorCurrentRef = useRef({ x: -100, y: -100 });
   const [cursorText, setCursorText] = useState('');
   const [cursorExpanded, setCursorExpanded] = useState(false);
-  const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const [isTouchDevice] = useState(() => typeof window !== 'undefined' ? ('ontouchstart' in window || (navigator.maxTouchPoints || 0) > 0) : false);
 
   // Canvas ref for 3D Innovation Energy Sculpture
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -68,7 +69,8 @@ export const PitchPerfectPage: React.FC<PitchPerfectPageProps> = ({ onBackToHome
 
   // Official Google Apps Script Web App Endpoint from SSREC_Pitch_Registration_GoogleSheets_FIXED
   const PITCH_GOOGLE_SCRIPT_URL =
-    'https://script.google.com/macros/s/AKfycbxdGPR5FNlI38fNZo3Q6KjmGHoVdI_f2yZ_b8feevHnJNlXVE8SU1sU28mcII4x9EcW/exec';
+    (import.meta.env.VITE_PITCH_GOOGLE_SCRIPT_URL as string) ||
+    'https://script.google.com/macros/s/AKfycby_hNEGoTBgYdEsE5eGw8FkjhGhV3TK_-FkRIviRZJX7b7prUvBB-6GRRoQx6DfHVDN/exec';
 
   // Registration Form State
   const [teamSize, setTeamSize] = useState<number>(1);
@@ -143,8 +145,6 @@ export const PitchPerfectPage: React.FC<PitchPerfectPageProps> = ({ onBackToHome
 
   // Touch device detection & Scroll effect
   useEffect(() => {
-    setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
-
     const handleScroll = () => {
       setScrolled(window.scrollY > 40);
     };
@@ -365,7 +365,7 @@ export const PitchPerfectPage: React.FC<PitchPerfectPageProps> = ({ onBackToHome
     }
 
     setIsSubmitting(true);
-    setSyncStatus('Syncing with SSREC Pitch Google Sheets & Google Drive...');
+    setSyncStatus('Submitting registration details...');
 
     // If solo pitcher (teamSize === 1), member1 is automatically the leader so Google Script memberCount >= 1 check succeeds
     const m1 =
@@ -454,26 +454,29 @@ export const PitchPerfectPage: React.FC<PitchPerfectPageProps> = ({ onBackToHome
 
     // 2. Dual sync to Supabase registrations table
     try {
-      await supabase.from('registrations').insert([
-        {
-          registration_id: assignedRegId,
-          team_name: googlePayload.teamName,
-          event_type: 'technical',
-          event_name: `PITCH PERFECT '26 - ${regForm.category}`,
-          college: regForm.college,
-          department: regForm.department,
-          leader_name: regForm.fullName,
-          leader_email: regForm.email,
-          leader_phone: regForm.phone,
-          leader_department: regForm.department,
-          leader_year: regForm.year,
-          project_title: regForm.projectTitle,
-          description: regForm.description,
-          transaction_id: regForm.transactionId,
-          payment_screenshot_name: driveFileUrl || (screenshotFile ? screenshotFile.name : 'UPI-VERIFIED-RECEIPT'),
-          submitted_at: new Date().toISOString(),
-        },
-      ]);
+      const activeMembers = [];
+      if (teamSize >= 2 && m1.name) activeMembers.push({ name: m1.name, email: m1.email, phone: m1.phone, department: m1.department, year: m1.year });
+      if (teamSize >= 3 && m2.name) activeMembers.push({ name: m2.name, email: m2.email, phone: m2.phone, department: m2.department, year: m2.year });
+      if (teamSize >= 4 && m3.name) activeMembers.push({ name: m3.name, email: m3.email, phone: m3.phone, department: m3.department, year: m3.year });
+
+      await saveRegistrationToSupabase({
+        registrationId: assignedRegId,
+        eventName: `Pitch Perfect '26`,
+        eventType: 'technical',
+        teamName: googlePayload.teamName,
+        collegeName: regForm.college,
+        department: regForm.department,
+        leaderName: regForm.fullName,
+        leaderEmail: regForm.email,
+        leaderPhone: regForm.phone,
+        leaderDepartment: regForm.department,
+        leaderYear: regForm.year,
+        projectTitle: regForm.projectTitle,
+        projectDescription: regForm.description,
+        transactionId: regForm.transactionId,
+        screenshotName: driveFileUrl || (screenshotFile ? screenshotFile.name : 'UPI-VERIFIED-RECEIPT'),
+        members: activeMembers,
+      });
     } catch (sbErr) {
       console.warn('Supabase sync note:', sbErr);
     }
@@ -515,7 +518,7 @@ export const PitchPerfectPage: React.FC<PitchPerfectPageProps> = ({ onBackToHome
       membersList: membersSummary,
     });
 
-    if (onToast) onToast('🎉 PITCH PERFECT ’26 Registration Confirmed & Synced to Google Sheet!');
+    if (onToast) onToast('🎉 PITCH PERFECT ’26 Registration Confirmed Successfully!');
   };
 
   const handleDownloadReceipt = () => {
@@ -2752,7 +2755,7 @@ export const PitchPerfectPage: React.FC<PitchPerfectPageProps> = ({ onBackToHome
                 REGISTRATION CONFIRMED 🚀
               </h3>
               <p style={{ color: '#475569', fontSize: '1.05rem', marginBottom: '24px' }}>
-                Your pitch slot has been registered in the official <strong>SSREC Pitch 2026 Google Sheet</strong>!
+                Your pitch slot has been registered in the official <strong>SSREC Pitch 2026 Database</strong>!
               </p>
 
               {/* Verified Pass Badge */}
@@ -2797,7 +2800,7 @@ export const PitchPerfectPage: React.FC<PitchPerfectPageProps> = ({ onBackToHome
                       gap: '4px',
                     }}
                   >
-                    <Check size={14} /> SHEETS SYNCED
+                    <Check size={14} /> REGISTRATION CONFIRMED
                   </span>
                 </div>
 
@@ -3446,7 +3449,7 @@ export const PitchPerfectPage: React.FC<PitchPerfectPageProps> = ({ onBackToHome
                     marginTop: '6px',
                   }}
                 >
-                  {isSubmitting ? syncStatus || 'SUBMITTING TO GOOGLE SHEETS...' : `CONFIRM & REGISTER (₹${teamSize * 200}) →`}
+                  {isSubmitting ? (syncStatus || 'SUBMITTING...') : `CONFIRM & REGISTER (₹${teamSize * 200}) →`}
                 </button>
               </form>
 
@@ -3613,7 +3616,7 @@ export const PitchPerfectPage: React.FC<PitchPerfectPageProps> = ({ onBackToHome
                   1. Scan using Google Pay, PhonePe, Paytm or BHIM.<br />
                   2. Transfer fee (<strong>₹{teamSize * 200}</strong> for {teamSize} {teamSize === 1 ? 'member' : 'members'}).<br />
                   3. Copy & paste the 12-digit UTR/Txn number in the form.<br />
-                  4. Instant sync to Google Sheet on submission.
+                  4. Instant confirmation on submission.
                 </div>
 
                 <div
@@ -3803,7 +3806,7 @@ export const PitchPerfectPage: React.FC<PitchPerfectPageProps> = ({ onBackToHome
               </div>
 
               <a
-                href="https://maps.google.com/?q=Sri+Sai+Ranganathan+Engineering+College"
+                href="https://www.google.com/maps/place/Sri+Sai+Ranganathan+Engineering+College/@10.993882,76.7856282,18z/data=!4m6!3m5!1s0x3ba860e379ab02fd:0x219a15bc44d1b4fc!8m2!3d10.993882!4d76.7856282!16s%2Fg%2F1tdn7316"
                 target="_blank"
                 rel="noreferrer"
                 style={{
@@ -3835,7 +3838,7 @@ export const PitchPerfectPage: React.FC<PitchPerfectPageProps> = ({ onBackToHome
             >
               <iframe
                 title="SSREC Campus Map"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3917.4728881222883!2d76.7972!3d10.9782!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba85b001!2sSri+Sai+Ranganathan+Engineering+College!5e0!3m2!1sen!2sin!4v1"
+                src="https://www.google.com/maps?q=10.993882,76.7856282&z=18&hl=en&output=embed"
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}

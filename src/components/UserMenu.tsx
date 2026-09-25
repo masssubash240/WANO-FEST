@@ -6,7 +6,7 @@ interface UserMenuProps {
   onOpenAuth?: (tab: "login" | "signup") => void;
 }
 
-export const UserMenu: React.FC<UserMenuProps> = ({ onOpenAuth: _onOpenAuth }) => {
+export const UserMenu: React.FC<UserMenuProps> = ({ onOpenAuth }) => {
   const { user, logout, isAuthenticated } = useAuth();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);

@@ -33,7 +33,6 @@ import { FEATURED_EVENTS } from './data/eventData';
 import { ContactPage } from './components/ContactPage';
 import { PitchPerfectPage } from './components/PitchPerfectPage';
 import { PitchTemplateModal } from './components/PitchTemplateModal';
-import { SITE_CONFIG } from './data/siteConfig';
 import { MessageCircle } from 'lucide-react';
 
 

@@ -581,7 +581,7 @@ function setupRegistrationForm() {
               responseText
             );
 
-        } catch (error) {
+        } catch (_error) {
 
           throw new Error(
             "Server returned an invalid response."

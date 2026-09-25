@@ -11,6 +11,7 @@ interface AuthModalProps {
 export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialTab = 'login' }) => {
   const { login } = useAuth();
   const [tab, setTab] = useState<'login' | 'signup'>(initialTab);
+  const [prevInitialTab, setPrevInitialTab] = useState(initialTab);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -20,8 +21,18 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialTa
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => { setTab(initialTab); }, [initialTab]);
-  useEffect(() => { setError(''); setSuccess(''); }, [tab]);
+  if (initialTab !== prevInitialTab) {
+    setPrevInitialTab(initialTab);
+    setTab(initialTab);
+    setError('');
+    setSuccess('');
+  }
+
+  const switchTab = (nextTab: 'login' | 'signup') => {
+    setTab(nextTab);
+    setError('');
+    setSuccess('');
+  };
 
   if (!isOpen) return null;
 
@@ -235,7 +246,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialTa
           padding: '4px', marginBottom: '24px', border: '1px solid rgba(0,229,255,0.12)',
         }}>
           {(['login', 'signup'] as const).map((t) => (
-            <button key={t} onClick={() => setTab(t)} style={{
+            <button key={t} onClick={() => switchTab(t)} style={{
               flex: 1, padding: '9px', borderRadius: '9px', cursor: 'pointer',
               fontFamily: 'var(--font-body)', fontSize: '0.82rem', fontWeight: 800,
               letterSpacing: '0.12em', textTransform: 'uppercase',

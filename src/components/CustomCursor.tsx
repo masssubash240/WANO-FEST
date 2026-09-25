@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 
 export const CustomCursor: React.FC = () => {
-  const [isEnabled, setIsEnabled] = useState(false);
+  const [isEnabled] = useState(() => typeof window !== 'undefined' ? window.matchMedia('(pointer: fine)').matches : false);
   const [cursorText, setCursorText] = useState<string | null>(null);
   const [cursorVariant, setCursorVariant] = useState<'default' | 'button' | 'card' | 'text' | 'register'>('default');
   const [isVisible, setIsVisible] = useState(false);
@@ -16,17 +16,14 @@ export const CustomCursor: React.FC = () => {
   const rafId = useRef<number | null>(null);
 
   useEffect(() => {
-    // Only enable on desktop pointer devices
-    const mediaQuery = window.matchMedia('(pointer: fine)');
-    if (!mediaQuery.matches) return;
+    if (!isEnabled) return;
 
-    setIsEnabled(true);
     document.body.classList.add('custom-cursor-enabled');
 
     const handleMouseMove = (e: MouseEvent) => {
       mouseX.current = e.clientX;
       mouseY.current = e.clientY;
-      if (!isVisible) setIsVisible(true);
+      setIsVisible((prev) => (prev ? prev : true));
 
       if (dotRef.current) {
         dotRef.current.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
@@ -92,7 +89,7 @@ export const CustomCursor: React.FC = () => {
       document.removeEventListener('mouseleave', handleMouseLeave);
       if (rafId.current) cancelAnimationFrame(rafId.current);
     };
-  }, [isVisible]);
+  }, [isEnabled]);
 
   if (!isEnabled) return null;
 
