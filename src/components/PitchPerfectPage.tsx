@@ -23,7 +23,6 @@ import {
   FileText,
   CheckCircle2,
 } from 'lucide-react';
-import { supabase } from '../lib/supabase';
 import { PitchTemplateModal } from './PitchTemplateModal';
 import { saveRegistrationToSupabase } from '../services/registrationService';
 
@@ -400,6 +399,9 @@ export const PitchPerfectPage: React.FC<PitchPerfectPageProps> = ({ onBackToHome
       leaderDepartment: regForm.department.trim(),
       leaderYear: regForm.year || 'III Year',
       college: regForm.college.trim(),
+      collegeName: regForm.college.trim(),
+      college_name: regForm.college.trim(),
+      institution: regForm.college.trim(),
       member1Name: m1.name.trim(),
       member1Email: m1.email.trim(),
       member1Phone: m1.phone.trim(),
@@ -453,17 +455,20 @@ export const PitchPerfectPage: React.FC<PitchPerfectPageProps> = ({ onBackToHome
     }
 
     // 2. Dual sync to Supabase registrations table
+    let supabaseSaveError = '';
     try {
       const activeMembers = [];
       if (teamSize >= 2 && m1.name) activeMembers.push({ name: m1.name, email: m1.email, phone: m1.phone, department: m1.department, year: m1.year });
       if (teamSize >= 3 && m2.name) activeMembers.push({ name: m2.name, email: m2.email, phone: m2.phone, department: m2.department, year: m2.year });
       if (teamSize >= 4 && m3.name) activeMembers.push({ name: m3.name, email: m3.email, phone: m3.phone, department: m3.department, year: m3.year });
 
-      await saveRegistrationToSupabase({
+      const supabaseResult = await saveRegistrationToSupabase({
         registrationId: assignedRegId,
         eventName: `Pitch Perfect '26`,
         eventType: 'technical',
         teamName: googlePayload.teamName,
+        teamSize,
+        participationCategory: regForm.category,
         collegeName: regForm.college,
         department: regForm.department,
         leaderName: regForm.fullName,
@@ -477,7 +482,15 @@ export const PitchPerfectPage: React.FC<PitchPerfectPageProps> = ({ onBackToHome
         screenshotName: driveFileUrl || (screenshotFile ? screenshotFile.name : 'UPI-VERIFIED-RECEIPT'),
         members: activeMembers,
       });
-    } catch (sbErr) {
+
+      if (!supabaseResult.success) {
+        supabaseSaveError = supabaseResult.error || 'Unknown Supabase error';
+        console.error('❌ Pitch registration could not be saved to Supabase:', supabaseSaveError);
+      } else {
+        console.log('✅ Pitch registration saved to Supabase:', supabaseResult.supabaseId);
+      }
+    } catch (sbErr: any) {
+      supabaseSaveError = sbErr?.message || String(sbErr);
       console.warn('Supabase sync note:', sbErr);
     }
 
@@ -519,6 +532,14 @@ export const PitchPerfectPage: React.FC<PitchPerfectPageProps> = ({ onBackToHome
     });
 
     if (onToast) onToast('🎉 PITCH PERFECT ’26 Registration Confirmed Successfully!');
+
+    // Surface a real persistence failure instead of silently reporting success.
+    if (supabaseSaveError) {
+      console.error('Supabase persistence failed for', assignedRegId, '-', supabaseSaveError);
+      if (onToast) {
+        onToast('⚠️ Registration captured locally, but Supabase rejected the record — check the pitch_registrations RLS policies.');
+      }
+    }
   };
 
   const handleDownloadReceipt = () => {

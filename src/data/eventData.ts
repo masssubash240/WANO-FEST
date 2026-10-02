@@ -1,7 +1,7 @@
 import type { EventItem, CharacterCard, Speaker, ScheduleDay, TicketTier, FAQItem } from '../types';
 
 export const EVENT_METRICS = [
-  { value: '14', label: 'EVENTS & GAMES', icon: 'flag' },
+  { value: '15', label: 'EVENTS & GAMES', icon: 'flag' },
   { value: '2', label: 'DIVISIONS — TECHNICAL & NON-TECHNICAL', icon: 'jollyRoger' },
   { value: '4', label: 'GAMES', icon: 'gamepad' },
   { value: 'TBA', label: 'PRIZES', icon: 'trophy' },
@@ -344,6 +344,36 @@ export const FEATURED_EVENTS: EventItem[] = [
     icon: '🎮',
     rulesSummary: ['PUBG, Free Fire, Chess and Carrom Pool are grouped under one E-Sports category.', 'No hacks, cheats, unauthorized software or unfair assistance.', 'Players must follow the announced game format, schedule and organizer instructions.'],
   },
+  {
+    id: 'ipl-auction',
+    eventNumber: '13',
+    title: 'IPL Auction',
+    subtitle: 'ACTION GAME • BID • STRATEGIZE • WIN',
+    category: 'non-tech',
+    tag: 'ACTION GAME',
+    image: '/images/ipl_auction.png',
+    prize: 'To Be Announced',
+    teamSize: '3–5 Members',
+    description: 'A high-energy virtual IPL Auction simulation where teams bid strategically for players with a ₹100 Crore virtual purse, balancing squad composition, overseas limits and purse management.',
+    highlights: ['₹100 Crore Virtual Purse', 'Bid Smart • Build Your Squad', '11–15 Players • Squad Balance'],
+    coordinator: 'To Be Announced',
+    department: 'To Be Announced',
+    year: 'To Be Announced',
+    venue: 'To Be Announced',
+    date: 'To Be Announced',
+    time: 'To Be Announced',
+    duration: 'To Be Announced',
+    eligibility: 'Registered college students',
+    icon: '🏏',
+    rulesSummary: [
+      'Each team must have 3–5 participants with a Team Name and a Captain.',
+      'Each team receives a ₹100 Crore virtual purse — cannot exceed available balance.',
+      'Teams must purchase a minimum of 11 and maximum of 15 players.',
+      'Required squad: at least 3 Batsmen, 3 All-Rounders, 3 Bowlers and 1 Wicketkeeper.',
+      'Maximum 3 Overseas Players per team.',
+      'The Auctioneer\'s decision is final and binding.',
+    ],
+  },
 ];
 
 export const CHARACTER_CARDS: CharacterCard[] = [
@@ -454,6 +484,7 @@ export const SCHEDULE_DAYS: ScheduleDay[] = [
       { time: 'TBA', title: 'Pirate Portraits — Photography', location: 'To Be Announced', track: 'non-tech', tag: 'COMPETITION' },
       { time: 'TBA', title: 'Grand Line Visuals — Videography', location: 'To Be Announced', track: 'non-tech', tag: 'COMPETITION' },
       { time: 'TBA', title: 'Straw Hat Studios — Short Film', location: 'To Be Announced', track: 'non-tech', tag: 'COMPETITION' },
+      { time: 'TBA', title: 'IPL Auction — Action Game', location: 'To Be Announced', track: 'non-tech', tag: 'COMPETITION' },
       { time: 'TBA', title: 'Grand Awards Ceremony', location: 'To Be Announced', track: 'all', tag: 'AWARDS' },
     ]
   }

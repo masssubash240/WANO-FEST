@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { supabase, pitchSupabase } from '../lib/supabase';
+import { supabase } from '../lib/supabase';
+import { saveRegistrationToSupabase } from '../services/registrationService';
 import { useAuth } from '../context/AuthContext';
 
 interface EventRegistrationModalProps {
@@ -723,8 +724,13 @@ export const EventRegistrationModal: React.FC<EventRegistrationModalProps> = ({
         eventType: formData.eventType || 'technical',
         eventName: formData.eventName || 'SSREC Event',
         college: formData.college.trim() || 'SSREC / Not Specified',
+        collegeName: formData.college.trim() || 'SSREC / Not Specified',
+        college_name: formData.college.trim() || 'SSREC / Not Specified',
+        institution: formData.college.trim() || 'SSREC / Not Specified',
+        collegeDepartment: formData.department.trim() || 'Not Specified',
         department: formData.department.trim() || 'Not Specified',
         leader: formData.leader.trim() || 'Team Captain',
+        leaderName: formData.leader.trim() || 'Team Captain',
         leaderEmail: formData.leaderEmail.trim() || (user?.email || 'captain@ssrec.edu'),
         leaderPhone: formData.leaderPhone.trim() || '9999999999',
         leaderDepartment: formData.leaderDepartment.trim() || 'General',
@@ -794,85 +800,113 @@ export const EventRegistrationModal: React.FC<EventRegistrationModalProps> = ({
         console.warn('Google Script fetch note (CORS redirect): using verified registration token', postErr);
       }
 
-      // 4. Save to Supabase (exact schema mapping & team_members relational insert)
-      try {
-        const targetClient = isPitchEvent ? pitchSupabase : supabase;
-        const { data: { session } } = await targetClient.auth.getSession();
-        const matchedEventId = await findMatchedEventId(payload.eventName, payload.eventType);
+      // 4. Save to Supabase (exact schema mapping & relational member insert)
+      if (isPitchEvent) {
+        // ── Pitch Perfect project (jonddiwnixoajiylqznx) ───────────────────────
+        // Dedicated `pitch_registrations` + `pitch_team_members` tables. The shared
+        // service strips any column missing from the live table schema, so this keeps
+        // working before/after sql/pitch-supabase-setup.sql is applied.
+        const pitchMembers = [
+          { name: payload.member1Name, email: payload.member1Email, phone: payload.member1Phone, department: payload.member1Department, year: payload.member1Year },
+          { name: payload.member2Name, email: payload.member2Email, phone: payload.member2Phone, department: payload.member2Department, year: payload.member2Year },
+          { name: payload.member3Name, email: payload.member3Email, phone: payload.member3Phone, department: payload.member3Department, year: payload.member3Year },
+          { name: payload.member4Name, email: payload.member4Email, phone: payload.member4Phone, department: payload.member4Department, year: payload.member4Year },
+        ].filter((m) => m.name && m.name.trim().length > 0);
 
-        let { data: createdReg, error: regError } = await targetClient
-          .from('registrations')
-          .insert([{
-            registration_id: finalRegId,
-            event_id: matchedEventId,
-            event_type: payload.eventType || 'technical',
-            team_name: payload.teamName?.trim() || 'Solo Participant',
-            college_name: payload.college?.trim() || 'SSREC',
+        try {
+          const pitchResult = await saveRegistrationToSupabase({
+            registrationId: finalRegId,
+            eventName: payload.eventName || "Pitch Perfect '26",
+            eventType: payload.eventType || 'technical',
+            teamName: payload.teamName?.trim() || 'Solo Participant',
+            participationCategory: payload.participationCategory || 'IDEA PITCH',
+            collegeName: payload.college?.trim() || 'SSREC',
             department: payload.department?.trim() || 'Not Specified',
-            leader_name: payload.leader?.trim() || 'Participant',
-            leader_email: payload.leaderEmail?.trim() || '',
-            leader_phone: payload.leaderPhone?.trim() || '',
-            leader_department: payload.leaderDepartment?.trim() || payload.department?.trim() || 'General',
-            leader_year: payload.leaderYear || '3rd Year',
-            project_title: payload.projectTitle?.trim() || 'General Entry',
-            project_description: payload.description?.trim() || 'No description provided.',
-            transaction_id: payload.transactionId?.trim() || (isSkippingPayment ? 'PAY-AT-VENUE' : 'NONE'),
-            payment_screenshot_url: screenshotFile?.name || (isSkippingPayment ? 'PAY-AT-VENUE' : 'NONE'),
-            payment_status: 'PENDING',
-            user_id: session?.user?.id ?? null,
-          }])
-          .select('id')
-          .single();
+            leaderName: payload.leader?.trim() || 'Participant',
+            leaderEmail: payload.leaderEmail?.trim() || '',
+            leaderPhone: payload.leaderPhone?.trim() || '',
+            leaderDepartment: payload.leaderDepartment?.trim() || payload.department?.trim() || 'General',
+            leaderYear: payload.leaderYear || '3rd Year',
+            projectTitle: payload.projectTitle?.trim() || 'General Entry',
+            projectDescription: payload.description?.trim() || 'No description provided.',
+            transactionId: payload.transactionId?.trim() || (isSkippingPayment ? 'PAY-AT-VENUE' : 'NONE'),
+            screenshotName: screenshotFile?.name || (isSkippingPayment ? 'PAY-AT-VENUE' : 'NONE'),
+            members: pitchMembers,
+          });
 
-        // Fallback for Pitch project if it uses pitch_registrations table
-        if (regError && isPitchEvent && regError.message.includes('registrations')) {
-          const fallback = await targetClient.from('pitch_registrations').insert([{
-            team_name: payload.teamName,
-            college_name: payload.college,
-            leader_email: payload.leaderEmail,
-            project_title: payload.projectTitle,
-            transaction_id: payload.transactionId,
-            payment_status: 'PENDING',
-          }]).select('id').single();
-          if (!fallback.error) {
-            createdReg = fallback.data;
-            regError = null;
+          if (!pitchResult.success) {
+            console.warn('Supabase pitch_registrations insert note:', pitchResult.error);
+          } else {
+            console.log('✅ Saved to Supabase pitch_registrations:', finalRegId, pitchResult.supabaseId);
           }
+        } catch (pitchErr) {
+          console.warn('Supabase pitch save warning:', pitchErr);
         }
+      } else {
+        // ── Wano Fest project (ajntopxhnbposllktkgv) ───────────────────────────
+        try {
+          const targetClient = supabase;
+          const { data: { session } } = await targetClient.auth.getSession();
+          const matchedEventId = await findMatchedEventId(payload.eventName, payload.eventType);
 
-        if (regError) {
-          console.warn('Supabase registration insert note:', regError.message);
-        } else if (createdReg?.id) {
-          console.log('✅ Saved to Supabase registrations table:', finalRegId, createdReg.id);
+          const { data: createdReg, error: regError } = await targetClient
+            .from('registrations')
+            .insert([{
+              registration_id: finalRegId,
+              event_id: matchedEventId,
+              event_type: payload.eventType || 'technical',
+              team_name: payload.teamName?.trim() || 'Solo Participant',
+              college_name: payload.college?.trim() || 'SSREC',
+              department: payload.department?.trim() || 'Not Specified',
+              leader_name: payload.leader?.trim() || 'Participant',
+              leader_email: payload.leaderEmail?.trim() || '',
+              leader_phone: payload.leaderPhone?.trim() || '',
+              leader_department: payload.leaderDepartment?.trim() || payload.department?.trim() || 'General',
+              leader_year: payload.leaderYear || '3rd Year',
+              project_title: payload.projectTitle?.trim() || 'General Entry',
+              project_description: payload.description?.trim() || 'No description provided.',
+              transaction_id: payload.transactionId?.trim() || (isSkippingPayment ? 'PAY-AT-VENUE' : 'NONE'),
+              payment_screenshot_url: screenshotFile?.name || (isSkippingPayment ? 'PAY-AT-VENUE' : 'NONE'),
+              payment_status: 'PENDING',
+              user_id: session?.user?.id ?? null,
+            }])
+            .select('id')
+            .single();
 
-          // Insert team members into team_members table
-          const membersToInsert = [
-            { name: payload.member1Name, email: payload.member1Email, phone: payload.member1Phone, dept: payload.member1Department, yr: payload.member1Year },
-            { name: payload.member2Name, email: payload.member2Email, phone: payload.member2Phone, dept: payload.member2Department, yr: payload.member2Year },
-            { name: payload.member3Name, email: payload.member3Email, phone: payload.member3Phone, dept: payload.member3Department, yr: payload.member3Year },
-            { name: payload.member4Name, email: payload.member4Email, phone: payload.member4Phone, dept: payload.member4Department, yr: payload.member4Year },
-          ].filter((m) => m.name && m.name.trim().length > 0);
+          if (regError) {
+            console.warn('Supabase registration insert note:', regError.message);
+          } else if (createdReg?.id) {
+            console.log('✅ Saved to Supabase registrations table:', finalRegId, createdReg.id);
 
-          if (membersToInsert.length > 0) {
-            const { error: tmError } = await targetClient
-              .from('team_members')
-              .insert(
-                membersToInsert.map((m, idx) => ({
-                  registration_id: createdReg.id,
-                  member_number: idx + 1,
-                  full_name: m.name.trim(),
-                  email: m.email?.trim() || null,
-                  phone: m.phone?.trim() || null,
-                  department: m.dept?.trim() || null,
-                  year: m.yr || null,
-                }))
-              );
-            if (tmError) console.warn('Supabase team_members insert note:', tmError.message);
-            else console.log(`✅ Saved ${membersToInsert.length} member(s) to team_members table`);
+            // Insert team members into team_members table
+            const membersToInsert = [
+              { name: payload.member1Name, email: payload.member1Email, phone: payload.member1Phone, dept: payload.member1Department, yr: payload.member1Year },
+              { name: payload.member2Name, email: payload.member2Email, phone: payload.member2Phone, dept: payload.member2Department, yr: payload.member2Year },
+              { name: payload.member3Name, email: payload.member3Email, phone: payload.member3Phone, dept: payload.member3Department, yr: payload.member3Year },
+              { name: payload.member4Name, email: payload.member4Email, phone: payload.member4Phone, dept: payload.member4Department, yr: payload.member4Year },
+            ].filter((m) => m.name && m.name.trim().length > 0);
+
+            if (membersToInsert.length > 0) {
+              const { error: tmError } = await targetClient
+                .from('team_members')
+                .insert(
+                  membersToInsert.map((m, idx) => ({
+                    registration_id: createdReg.id,
+                    member_number: idx + 1,
+                    full_name: m.name.trim(),
+                    email: m.email?.trim() || null,
+                    phone: m.phone?.trim() || null,
+                    department: m.dept?.trim() || null,
+                    year: m.yr || null,
+                  }))
+                );
+              if (tmError) console.warn('Supabase team_members insert note:', tmError.message);
+              else console.log(`✅ Saved ${membersToInsert.length} member(s) to team_members table`);
+            }
           }
+        } catch (sbErr) {
+          console.warn('Supabase save warning:', sbErr);
         }
-      } catch (sbErr) {
-        console.warn('Supabase save warning:', sbErr);
       }
 
       // Success!

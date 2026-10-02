@@ -578,6 +578,57 @@ const events: EventSeed[] = [
     rules: ['PUBG — players must follow the tournament instructions, required team format and match schedule; hacks, cheats, unauthorized software, opponent teaming and game-glitch exploitation are prohibited.', 'Free Fire — players must use registered game accounts; hacking, cheating, unauthorized third-party applications, bug exploitation and abusive behavior are prohibited.', 'Chess — each player has 16 pieces, White moves first, official chess rules apply, touch-move rules apply in official competitions, and the objective is checkmate.', 'Carrom Pool — matches follow the announced tournament format and official carrom rules; players must use the striker properly, avoid unauthorized assistance and follow fair-play requirements.', 'All players must report on time, maintain discipline and sportsmanship, follow organizer instructions and report disputes to the referee or organizer.', 'The organizer’s decision is final.'],
     notes: ['Games included: PUBG • Free Fire • Chess • Carrom Pool.', 'Exact team formats, match schedules, time controls and disconnection policies will be announced by organizers.'],
   },
+  {
+    id: 'ipl-auction', missionNumber: 'EVENT 13', title: 'IPL Auction', japaneseTitle: 'नीलामी का महासमर // BID SMART RULE THE AUCTION',
+    tagline: 'BUILD YOUR TEAM • BID SMART • RULE THE AUCTION', missionType: 'NON-TECH', category: 'NON-TECHNICAL — ACTION GAME', image: '/images/ipl_auction.png',
+    coordinator: [
+      { name: 'To Be Announced', department: 'To Be Announced', year: 'To Be Announced', role: 'IPL Auction Coordinator' }
+    ],
+    crewSize: '3–5 Members', battleTime: 'Auction Duration (TBA)', mode: 'LIVE AUCTION SIMULATION', minMembers: 3, maxMembers: 5,
+    crewType: 'SQUAD',
+    description: 'A high-energy virtual IPL Auction simulation where teams bid strategically for players using a ₹100 Crore virtual purse. Teams must balance squad composition, overseas player limits and purse management to build the strongest squad.',
+    rules: [
+      'Each team must consist of 3–5 participants with a Team Name and a Captain. Only the Captain or an authorized team member can place bids.',
+      'Each team receives a ₹100 Crore virtual purse. Teams cannot exceed their available purse and negative balance is strictly not allowed.',
+      'Each player will be introduced by the Auctioneer along with their Base Price. The team with the highest valid bid acquires the player. Once "SOLD" is announced, the player is officially added to that team\'s squad.',
+      'Minimum bid increment is ₹1 Crore. All bids must be clearly announced within the 10-second time limit. The Auctioneer may reject unclear or late bids.',
+      'Each team must purchase a minimum of 11 players and a maximum of 15 players.',
+      'Each team must have at least 3 Batsmen, 3 All-Rounders, 3 Bowlers and 1 Wicketkeeper. The remaining players can belong to any category.',
+      'Each team can purchase a maximum of 3 Overseas Players. Once the limit is reached, the team cannot bid for another overseas player.',
+      'Each bid has a 10-second time limit. If no valid bid is received, the Auctioneer may close the bidding.',
+      'Unsold players will be kept for an Accelerated Auction Round. A team can bid for an unsold player only if it has sufficient purse, available squad space and an available overseas slot if applicable.',
+      'Teams should manage their purse carefully, considering player value, squad balance, remaining purse, player category, overseas limit and required players. Overspending may affect final evaluation.',
+      'A team may be warned, penalized or disqualified for fake bidding, exceeding the purse, exceeding squad limits, failing minimum squad requirements, misbehavior, unauthorized assistance or repeated arguments with the Auctioneer.',
+      'The winner is decided based on Squad Balance, Strategic Bidding, Effective Purse Management, Player Selection, Required Squad Combination and Remaining Purse. The Auctioneer\'s and Event Coordinators\' decision is final and binding.',
+    ],
+    judging: [
+      { criterion: 'Squad Balance', marks: 25, description: 'Overall team composition covering all required player categories.' },
+      { criterion: 'Strategic Bidding', marks: 20, description: 'Smart bidding decisions, timing and avoiding overbidding.' },
+      { criterion: 'Purse Management', marks: 20, description: 'Effective use of the ₹100 Crore virtual purse with healthy remaining balance.' },
+      { criterion: 'Player Selection', marks: 20, description: 'Quality and suitability of players acquired relative to squad needs.' },
+      { criterion: 'Squad Combination', marks: 15, description: 'Meeting all required player-category minimums and squad composition rules.' },
+    ],
+    faq: [
+      { question: 'What is the virtual purse amount?', answer: 'Each team receives a ₹100 Crore virtual purse that can only be used to purchase players.' },
+      { question: 'What is the minimum and maximum squad size?', answer: 'Each team must purchase a minimum of 11 players and a maximum of 15 players.' },
+      { question: 'How many overseas players can a team have?', answer: 'Each team can have a maximum of 3 Overseas Players.' },
+      { question: 'What are the required player categories?', answer: 'At least 3 Batsmen, 3 All-Rounders, 3 Bowlers and 1 Wicketkeeper. The remaining slots can be any category.' },
+      { question: 'What happens to unsold players?', answer: 'Unsold players go to an Accelerated Auction Round. A team can bid only if it has sufficient purse, squad space and overseas slot if applicable.' },
+      { question: 'What is the bidding time limit?', answer: 'Each bid has a 10-second time limit. If no valid bid is received, the Auctioneer may close the bidding.' },
+      { question: 'Who can place bids?', answer: 'Only the Captain or an authorized team member designated before the auction can place bids.' },
+    ],
+    notes: [
+      'Team Size: 3–5 Members per team.',
+      'Each team must have a Team Name and a Captain before the event.',
+      'Virtual purse: ₹100 Crore — cannot go negative.',
+      'Minimum squad: 11 players | Maximum squad: 15 players.',
+      'Maximum 3 Overseas Players per team.',
+      'Required player mix: 3 Batsmen + 3 All-Rounders + 3 Bowlers + 1 Wicketkeeper.',
+      'All participants must report before the scheduled event time.',
+      'Once a bid is accepted, it cannot be withdrawn.',
+      'The Auctioneer\'s and Event Coordinators\' decision is final and binding.',
+    ],
+  },
 
 ];
 

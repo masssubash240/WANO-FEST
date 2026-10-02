@@ -671,6 +671,49 @@ body.custom-cursor-enabled [role="button"] {
   }
 }
 
+/* ══════════════════════════════════════════════
+   INFINITE RUNNING SPONSORS & PARTNERS MARQUEE
+   ══════════════════════════════════════════════ */
+@keyframes sponsorMarqueeLeft {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes sponsorMarqueeRight {
+  0% {
+    transform: translate3d(-50%, 0, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.sponsor-running-track {
+  display: flex !important;
+  width: max-content !important;
+  animation: sponsorMarqueeLeft 28s linear infinite;
+  will-change: transform;
+}
+
+.sponsor-running-track:hover {
+  animation-play-state: paused !important;
+}
+
+.sponsor-running-track-fast {
+  display: flex !important;
+  width: max-content !important;
+  animation: sponsorMarqueeLeft 22s linear infinite;
+  will-change: transform;
+}
+
+.sponsor-running-track-fast:hover {
+  animation-play-state: paused !important;
+}
+
 
 
 

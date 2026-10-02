@@ -1,33 +1,37 @@
 // ==============================================================================
-// SSREC PITCH PERFECT '26 — Smart Dynamic Google Apps Script Web App
-// Target Sheet : https://docs.google.com/spreadsheets/d/1WgYRWudN8zeOnf1JW0yWRssfGbexGwn3JwCEny7sNf0/edit?gid=1604668848
-// Spreadsheet ID : 1WgYRWudN8zeOnf1JW0yWRssfGbexGwn3JwCEny7sNf0
-// Target GID     : 1604668848 (Registrations tab)
-//
-// 🎯 SMART FEATURE: Dynamic Header Mapping
-// This script automatically matches columns BY THEIR HEADER TEXT in Row 1.
-// It will NEVER mess up your existing data (Rows 2, 3, etc.)!
-// Wherever "College Name" is placed, it will automatically find and fill it!
+// SSREC PITCH PERFECT '26 — COMPLETE GOOGLE APPS SCRIPT WEB APP
+// Brand New Sheet Edition (Plug & Play - Auto Setup)
+// ==============================================================================
+// 🎯 FEATURES:
+// 1. Works automatically with your new sheet (No need to hardcode Spreadsheet ID if opened via Extensions > Apps Script).
+// 2. Automatically sets up all 39 Headers on Row 1 with professional styling on first run.
+// 3. Guaranteed "College Name" column saving.
+// 4. Stores payment screenshot directly to Google Drive folder and pastes viewable link.
+// 5. Dynamic Header Matching — even if you move or rename columns, data won't break!
 // ==============================================================================
 
-const SPREADSHEET_ID  = "1WgYRWudN8zeOnf1JW0yWRssfGbexGwn3JwCEny7sNf0";
-const TARGET_GID      = 1604668848;
-const SHEET_NAME      = "Registrations";
 const FOLDER_NAME     = "SSREC Pitch Perfect Payment Screenshots";
-const REGISTRATION_FEE = "₹200/member";
+const DEFAULT_FEE    = "₹200/member";
 
 /**
- * GET request — Health check
+ * GET request — Health check & Setup verification
  */
 function doGet() {
   try {
     const sheet = getSheet_();
+    const headers = getHeadersFromSheet_(sheet);
+    const hasCollege = headers.some(function(h) {
+      return /college|institution|university|campus/i.test(h);
+    });
+
     return json_({
       ok: true,
-      message: "SSREC Pitch Perfect '26 Dynamic API is running successfully!",
+      message: "SSREC Pitch Perfect '26 New API is running successfully!",
       sheetName: sheet.getName(),
-      sheetGid: sheet.getSheetId(),
-      totalRegistrations: Math.max(0, sheet.getLastRow() - 1)
+      totalRegistrations: Math.max(0, sheet.getLastRow() - 1),
+      hasCollegeColumn: hasCollege,
+      columnsCount: headers.length,
+      columns: headers
     });
   } catch (err) {
     return json_({ ok: false, error: String(err.message || err) });
@@ -35,7 +39,7 @@ function doGet() {
 }
 
 /**
- * POST request — Smart Registration Append
+ * POST request — Handles incoming registration submissions
  */
 function doPost(e) {
   try {
@@ -68,53 +72,73 @@ function doPost(e) {
       }
     }
 
-    // ── Prepare Key-Value Data Dictionary ───────────────────────
+    // ── Prepare Clean Data Dictionary ───────────────────────────
     const leaderName = trim_(data.leaderName || data.leader || data.fullName);
     const leaderEmail = trim_(data.leaderEmail || data.email);
     const leaderPhone = trim_(data.leaderPhone || data.leaderMobile || data.phone);
-    const leaderDept = trim_(data.leaderDepartment || data.department);
+    const leaderDept = trim_(data.leaderDepartment || data.leaderDept || data.department);
     const leaderYear = trim_(data.leaderYear || data.year || "3rd Year");
-    const college = trim_(data.college || data.collegeName || "SSREC");
+
+    // Capture College with all possible aliases
+    const college = trim_(data.college || data.collegeName || data.college_name || data.institution || "SSREC");
+    const collegeDept = trim_(data.department || data.collegeDepartment || data.college_department || leaderDept || "Not Specified");
 
     const dict = {
       registrationId: registrationId,
       timestamp: timestamp,
-      teamName: trim_(data.teamName) || `${leaderName}'s Team`,
+      eventName: trim_(data.eventName) || "Pitch Perfect '26",
       category: trim_(data.participationCategory || data.category || "IDEA PITCH"),
-      projectTitle: trim_(data.projectTitle || data.ideaTitle),
-      domain: trim_(data.domain || "Innovation & Technology"),
-      description: trim_(data.description || data.projectDescription),
+      projectTitle: trim_(data.projectTitle || data.ideaTitle || "Pitch Entry"),
+      domain: trim_(data.domain || "Technology & Innovation"),
+      description: trim_(data.description || data.projectDescription || ""),
+      teamName: trim_(data.teamName) || `${leaderName}'s Team`,
       college: college,
+      collegeDepartment: collegeDept,
 
+      // Leader
       leaderName: leaderName,
       leaderEmail: leaderEmail,
       leaderPhone: leaderPhone,
       leaderDept: leaderDept,
       leaderYear: leaderYear,
 
-      m1Name: trim_(data.member1Name),
-      m1Email: trim_(data.member1Email),
-      m1Phone: trim_(data.member1Phone || data.member1Mobile),
-      m1Dept: trim_(data.member1Department),
-      m1Year: trim_(data.member1Year),
+      // Member 1
+      m1Name: trim_(data.member1Name || data.m1Name),
+      m1Email: trim_(data.member1Email || data.m1Email),
+      m1Phone: trim_(data.member1Phone || data.member1Mobile || data.m1Phone),
+      m1Dept: trim_(data.member1Department || data.m1Dept),
+      m1Year: trim_(data.member1Year || data.m1Year),
 
-      m2Name: trim_(data.member2Name),
-      m2Email: trim_(data.member2Email),
-      m2Phone: trim_(data.member2Phone || data.member2Mobile),
-      m2Dept: trim_(data.member2Department),
-      m2Year: trim_(data.member2Year),
+      // Member 2
+      m2Name: trim_(data.member2Name || data.m2Name),
+      m2Email: trim_(data.member2Email || data.m2Email),
+      m2Phone: trim_(data.member2Phone || data.member2Mobile || data.m2Phone),
+      m2Dept: trim_(data.member2Department || data.m2Dept),
+      m2Year: trim_(data.member2Year || data.m2Year),
 
-      m3Name: trim_(data.member3Name),
-      m3Email: trim_(data.member3Email),
-      m3Phone: trim_(data.member3Phone || data.member3Mobile),
-      m3Dept: trim_(data.member3Department),
-      m3Year: trim_(data.member3Year),
+      // Member 3
+      m3Name: trim_(data.member3Name || data.m3Name),
+      m3Email: trim_(data.member3Email || data.m3Email),
+      m3Phone: trim_(data.member3Phone || data.member3Mobile || data.m3Phone),
+      m3Dept: trim_(data.member3Department || data.m3Dept),
+      m3Year: trim_(data.member3Year || data.m3Year),
 
+      // Member 4
+      m4Name: trim_(data.member4Name || data.m4Name),
+      m4Email: trim_(data.member4Email || data.m4Email),
+      m4Phone: trim_(data.member4Phone || data.member4Mobile || data.m4Phone),
+      m4Dept: trim_(data.member4Department || data.m4Dept),
+      m4Year: trim_(data.member4Year || data.m4Year),
+
+      // Payment & Status
       transactionId: trim_(data.transactionId) || "PAY-AT-VENUE",
       paymentUrl: paymentUrl,
-      regFee: REGISTRATION_FEE,
+      regFee: trim_(data.registrationFee || DEFAULT_FEE),
       status: "Submitted"
     };
+
+    // ── Auto-ensure Sheet has Headers and College Column ────────
+    ensureHeadersAndCollegeColumn_(sheet);
 
     // ── Read Row 1 Headers from Sheet ──────────────────────────
     const lastCol = Math.max(sheet.getLastColumn(), 1);
@@ -130,9 +154,11 @@ function doPost(e) {
         newRow[colIdx] = dict.registrationId;
       } else if (/submitted|timestamp|date/i.test(h)) {
         newRow[colIdx] = dict.timestamp;
-      } else if (/college/i.test(h)) {
+      } else if (/college\s*(dept|department)/i.test(h)) {
+        newRow[colIdx] = dict.collegeDepartment;
+      } else if (/college|institution|university|campus/i.test(h)) {
         newRow[colIdx] = dict.college;
-      } else if (/team\s*name|^name$/i.test(h) && !/leader|member/i.test(h)) {
+      } else if (/team\s*name|^team$/i.test(h) && !/leader|member/i.test(h)) {
         newRow[colIdx] = dict.teamName;
       } else if (/category|participation/i.test(h)) {
         newRow[colIdx] = dict.category;
@@ -191,26 +217,39 @@ function doPost(e) {
       } else if (/member\s*0?3.*year/i.test(h)) {
         newRow[colIdx] = dict.m3Year;
       }
-      // Transaction / Screenshot / Fee / Status
-      else if (/transaction|upi/i.test(h)) {
+      // Member 04
+      else if (/member\s*0?4.*(name|full)/i.test(h) || (/member\s*0?4$/i.test(h))) {
+        newRow[colIdx] = dict.m4Name;
+      } else if (/member\s*0?4.*email/i.test(h)) {
+        newRow[colIdx] = dict.m4Email;
+      } else if (/member\s*0?4.*(phone|mob)/i.test(h)) {
+        newRow[colIdx] = dict.m4Phone;
+      } else if (/member\s*0?4.*dept/i.test(h)) {
+        newRow[colIdx] = dict.m4Dept;
+      } else if (/member\s*0?4.*year/i.test(h)) {
+        newRow[colIdx] = dict.m4Year;
+      }
+      // Payment & Transaction
+      else if (/transaction|upi|ref/i.test(h)) {
         newRow[colIdx] = dict.transactionId;
       } else if (/screenshot|payment.*(proof|link|url)/i.test(h)) {
         newRow[colIdx] = dict.paymentUrl;
       } else if (/fee|amount/i.test(h)) {
         newRow[colIdx] = dict.regFee;
-      } else if (/status/i.test(h)) {
+      } else if (/status|confirm/i.test(h)) {
         newRow[colIdx] = dict.status;
       }
     }
 
-    // Append the row to sheet
+    // Append the row cleanly to sheet
     sheet.appendRow(newRow);
 
     return json_({
       ok: true,
       registrationId: registrationId,
+      college: dict.college,
       paymentScreenshot: paymentUrl,
-      message: "Pitch Perfect registration successfully recorded!",
+      message: "Pitch Perfect registration successfully recorded in Google Sheets!",
       timestamp: timestamp
     });
 
@@ -220,49 +259,138 @@ function doPost(e) {
 }
 
 /**
- * ─────────────────────────────────────────────────────────────
- * addCollegeColumn — Run this ONCE to automatically insert
- * "College Name" column safely without disturbing existing data!
- * ─────────────────────────────────────────────────────────────
+ * Standard 39 Headers definition
  */
-function addCollegeColumn() {
-  const sheet = getSheet_();
-  const lastCol = sheet.getLastColumn();
-  const headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
+function getStandardHeaders_() {
+  return [
+    "Registration ID",
+    "Submitted At (IST)",
+    "Event Name",
+    "Pitch Category",
+    "Project / Idea Title",
+    "Technology Domain",
+    "Pitch Description",
+    "Team Name",
+    "College Name",
+    "College Department",
 
-  // Check if College Name already exists
-  for (let i = 0; i < headers.length; i++) {
-    if (/college/i.test(String(headers[i]))) {
-      Logger.log("ℹ️ 'College Name' column already exists at Column " + (i + 1) + " (" + headers[i] + "). No changes needed!");
-      return;
-    }
+    // Team Leader
+    "Leader Name",
+    "Leader Email",
+    "Leader Mobile",
+    "Leader Department",
+    "Leader Year",
+
+    // Member 1
+    "Member 1 Name",
+    "Member 1 Email",
+    "Member 1 Mobile",
+    "Member 1 Department",
+    "Member 1 Year",
+
+    // Member 2
+    "Member 2 Name",
+    "Member 2 Email",
+    "Member 2 Mobile",
+    "Member 2 Department",
+    "Member 2 Year",
+
+    // Member 3
+    "Member 3 Name",
+    "Member 3 Email",
+    "Member 3 Mobile",
+    "Member 3 Department",
+    "Member 3 Year",
+
+    // Member 4
+    "Member 4 Name",
+    "Member 4 Email",
+    "Member 4 Mobile",
+    "Member 4 Department",
+    "Member 4 Year",
+
+    // Payment & Status
+    "UPI Transaction ID",
+    "Payment Screenshot Link",
+    "Registration Fee",
+    "Status"
+  ];
+}
+
+/**
+ * Ensures Row 1 headers exist and "College Name" column is present
+ */
+function ensureHeadersAndCollegeColumn_(sheet) {
+  const lastRow = sheet.getLastRow();
+  const lastCol = sheet.getLastColumn();
+
+  // If sheet is completely empty, initialize all standard headers
+  if (lastRow === 0 || lastCol === 0) {
+    setupNewSheet();
+    return;
   }
 
-  // Find position: insert after Column L (Team Leader - Year) or after Column C (Team Name)
-  let insertAfterCol = 3; // default after Column C
+  const headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
+
+  // Check if College Name column exists
+  let hasCollege = false;
   for (let i = 0; i < headers.length; i++) {
-    if (/leader.*year/i.test(String(headers[i]))) {
-      insertAfterCol = i + 1; // insert right after Leader Year!
+    if (/college|institution|university|campus/i.test(String(headers[i] || ""))) {
+      hasCollege = true;
       break;
     }
   }
 
-  sheet.insertColumnAfter(insertAfterCol);
-  const collegeColIdx = insertAfterCol + 1;
-  const headerCell = sheet.getRange(1, collegeColIdx);
-  headerCell.setValue("College Name");
-  headerCell.setFontWeight("bold");
-  headerCell.setBackground("#1a2234");
-  headerCell.setFontColor("#00e5ff");
-  sheet.autoResizeColumns(collegeColIdx, 1);
-
-  Logger.log("✅ 'College Name' column successfully inserted at Column " + collegeColIdx + " without touching existing rows!");
+  // If missing, insert College Name column right after Team Name or Category
+  if (!hasCollege) {
+    let insertAfterCol = 3;
+    for (let i = 0; i < headers.length; i++) {
+      const h = String(headers[i] || "").toLowerCase();
+      if (/team\s*name/i.test(h) || /category|participation/i.test(h)) {
+        insertAfterCol = i + 1;
+        break;
+      }
+    }
+    sheet.insertColumnAfter(insertAfterCol);
+    const colIdx = insertAfterCol + 1;
+    const cell = sheet.getRange(1, colIdx);
+    cell.setValue("College Name");
+    cell.setFontWeight("bold");
+    cell.setBackground("#0b1329");
+    cell.setFontColor("#00e5ff");
+    try {
+      sheet.autoResizeColumns(colIdx, 1);
+    } catch (e) {}
+  }
 }
 
 /**
- * ─────────────────────────────────────────────────────────────
- * getSheet_ — finds target sheet tab by GID or Name
- * ─────────────────────────────────────────────────────────────
+ * Run this function once in Apps Script to instantly set up Row 1 headers with styling!
+ */
+function setupNewSheet() {
+  const sheet = getSheet_();
+  const headers = getStandardHeaders_();
+
+  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  sheet.setFrozenRows(1);
+
+  // Premium Header Styling
+  const headerRange = sheet.getRange(1, 1, 1, headers.length);
+  headerRange.setFontWeight("bold");
+  headerRange.setBackground("#0b1329");
+  headerRange.setFontColor("#00e5ff");
+  headerRange.setFontSize(10);
+  headerRange.setHorizontalAlignment("center");
+
+  try {
+    sheet.autoResizeColumns(1, headers.length);
+  } catch (e) {}
+
+  Logger.log("✅ Successfully formatted new sheet with " + headers.length + " headers!");
+}
+
+/**
+ * Get active sheet tab automatically
  */
 function getSheet_() {
   let ss = null;
@@ -271,34 +399,18 @@ function getSheet_() {
   } catch (e) {}
 
   if (!ss) {
-    try {
-      ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-    } catch (e) {
-      throw new Error("Could not open spreadsheet by ID: " + SPREADSHEET_ID);
-    }
+    throw new Error("Please open this script via Extensions > Apps Script from inside your new Google Sheet.");
   }
 
-  const sheets = ss.getSheets();
-
-  // 1. Try matching GID 1604668848
-  for (let i = 0; i < sheets.length; i++) {
-    if (sheets[i].getSheetId() === TARGET_GID) {
-      return sheets[i];
-    }
+  let sheet = ss.getSheetByName("Registrations");
+  if (!sheet) {
+    sheet = ss.getActiveSheet() || ss.getSheets()[0];
   }
-
-  // 2. Try matching Sheet Name "Registrations"
-  let sheet = ss.getSheetByName(SHEET_NAME);
-  if (sheet) return sheet;
-
-  // 3. Fallback
-  return sheets[0];
+  return sheet;
 }
 
 /**
- * ─────────────────────────────────────────────────────────────
- * getFolder_ — Google Drive folder for payment screenshots
- * ─────────────────────────────────────────────────────────────
+ * Locate or create payment screenshots folder in Google Drive
  */
 function getFolder_() {
   const folders = DriveApp.getFoldersByName(FOLDER_NAME);
@@ -306,6 +418,14 @@ function getFolder_() {
   const folder = DriveApp.createFolder(FOLDER_NAME);
   folder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
   return folder;
+}
+
+function getHeadersFromSheet_(sheet) {
+  const lastCol = sheet.getLastColumn();
+  if (lastCol === 0) return [];
+  return sheet.getRange(1, 1, 1, lastCol).getValues()[0].map(function(c) {
+    return String(c || "").trim();
+  });
 }
 
 function trim_(v) {

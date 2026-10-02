@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { DETAILED_EVENTS } from '../data/eventDetailData';
 import type { DetailedEventData } from '../data/eventDetailData';
+import { SponsorsSection } from './SponsorsSection';
 
 interface EventDetailPageProps {
   eventId?: string;
@@ -3208,6 +3209,9 @@ export const EventDetailPage: React.FC<EventDetailPageProps> = ({
           </div>
         </div>
       </section>
+
+      {/* ─── OFFICIAL SPONSORS & PARTNERS SHOWCASE ─── */}
+      <SponsorsSection onNavigateContact={() => { window.location.hash = 'contact'; }} />
 
       {/* ─── REGISTRATION CONFIRMATION TOAST (Spec Section 20) ─── */}
       {regNotice && (

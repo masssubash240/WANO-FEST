@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useScrollVelocity } from '../hooks/useScrollVelocity';
 import { setGlobalAmbientMuted, startGlobalAmbientAudio } from '../utils/ambientAudio';
+import { ALL_SPONSOR_LOGOS } from '../data/sponsorData';
 
 interface HeroProps {
   onRegisterClick: () => void;
@@ -304,12 +305,12 @@ export const Hero: React.FC<HeroProps> = ({ onRegisterClick, onNavigatePitch, on
               src="/images/wano_fest_overall_logo.png"
               alt="CybiTradic Wano Fest"
               style={{
-                width: 'min(100%, 640px)',
-                maxHeight: '190px',
+                width: 'min(100%, 720px)',
+                maxHeight: '220px',
                 objectFit: 'contain',
                 objectPosition: 'left center',
                 mixBlendMode: 'normal',
-                filter: 'drop-shadow(0 10px 25px rgba(0,0,0,0.75)) drop-shadow(0 0 20px rgba(0, 229, 255, 0.2))',
+                filter: 'drop-shadow(0 12px 28px rgba(0,0,0,0.8)) drop-shadow(0 0 24px rgba(0, 229, 255, 0.25))',
               }}
             />
           </div>
@@ -508,41 +509,149 @@ export const Hero: React.FC<HeroProps> = ({ onRegisterClick, onNavigatePitch, on
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '14px',
-              background: 'rgba(8, 12, 22, 0.85)',
-              border: '1px solid rgba(0, 229, 255, 0.25)',
-              borderRadius: '14px',
-              padding: '8px 18px',
-              backdropFilter: 'blur(12px)',
+              gap: '16px',
+              background: 'rgba(8, 12, 22, 0.88)',
+              border: '1.5px solid rgba(0, 229, 255, 0.35)',
+              borderRadius: '16px',
+              padding: '10px 22px',
+              backdropFilter: 'blur(14px)',
               alignSelf: 'flex-start',
+              boxShadow: '0 4px 20px rgba(0, 229, 255, 0.15)',
             }}
           >
-            <span style={{ fontSize: '0.68rem', fontWeight: 800, color: 'var(--text-muted)', letterSpacing: '0.12em' }}>
+            <span style={{ fontSize: '0.74rem', fontWeight: 800, color: 'var(--text-muted)', letterSpacing: '0.14em' }}>
               COUNTDOWN:
             </span>
-            <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            <div style={{ display: 'flex', gap: '14px', alignItems: 'center' }}>
               {[
-                { val: timeLeft.days, unit: 'D' },
-                { val: timeLeft.hours, unit: 'H' },
-                { val: timeLeft.minutes, unit: 'M' },
-                { val: timeLeft.seconds, unit: 'S' },
+                { val: timeLeft.days, unit: 'DAYS' },
+                { val: timeLeft.hours, unit: 'HOURS' },
+                { val: timeLeft.minutes, unit: 'MINS' },
+                { val: timeLeft.seconds, unit: 'SECS' },
               ].map((item, idx) => (
-                <div key={idx} style={{ display: 'flex', alignItems: 'baseline', gap: '2px' }}>
+                <div key={idx} style={{ display: 'flex', alignItems: 'baseline', gap: '3px' }}>
                   <span
                     style={{
                       fontFamily: 'var(--font-title)',
-                      fontSize: '1rem',
+                      fontSize: '1.18rem',
                       fontWeight: 900,
                       color: '#00e5ff',
+                      textShadow: '0 0 10px rgba(0, 229, 255, 0.5)',
                     }}
                   >
                     {String(item.val).padStart(2, '0')}
                   </span>
-                  <span style={{ fontSize: '0.62rem', color: '#8e9bb4', fontWeight: 700 }}>
+                  <span style={{ fontSize: '0.62rem', color: '#8e9bb4', fontWeight: 700, letterSpacing: '0.04em' }}>
                     {item.unit}
                   </span>
                 </div>
               ))}
+            </div>
+          </div>
+
+          {/* ─── OFFICIAL SPONSOR & ALLIANCE RUNNING MARQUEE (UNDER COUNTDOWN) ─── */}
+          <div
+            style={{
+              marginTop: '20px',
+              width: '100%',
+              maxWidth: '920px',
+              borderRadius: '26px',
+              background: 'rgba(8, 12, 22, 0.95)',
+              border: '1.5px solid rgba(212, 175, 55, 0.55)',
+              boxShadow: '0 12px 40px rgba(0, 0, 0, 0.92), 0 0 30px rgba(212, 175, 55, 0.25)',
+              padding: '12px 18px',
+              backdropFilter: 'blur(16px)',
+              overflow: 'hidden',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '16px',
+              maskImage: 'linear-gradient(to right, transparent 0%, black 25px, black calc(100% - 25px), transparent 100%)',
+              WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 25px, black calc(100% - 25px), transparent 100%)',
+            }}
+          >
+            {/* Label */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                paddingRight: '16px',
+                borderRight: '1.5px solid rgba(255, 255, 255, 0.22)',
+                flexShrink: 0,
+                zIndex: 2,
+              }}
+            >
+              <span style={{ fontSize: '1.15rem', color: '#ffb703' }}>⚡</span>
+              <span
+                style={{
+                  fontSize: '0.8rem',
+                  fontWeight: 900,
+                  letterSpacing: '0.14em',
+                  color: '#ffb703',
+                  textTransform: 'uppercase',
+                  whiteSpace: 'nowrap',
+                  fontFamily: 'var(--font-title)',
+                }}
+              >
+                SPONSORS &amp; ALLIANCE:
+              </span>
+            </div>
+
+            {/* Infinite Marquee Track */}
+            <div className="sponsor-running-track" style={{ gap: '16px', alignItems: 'center' }}>
+              {[...ALL_SPONSOR_LOGOS, ...ALL_SPONSOR_LOGOS].map((sp, idx) => {
+                const isRyux = sp.logo.toLowerCase().includes('ryux');
+                const CardTag = sp.url ? 'a' : 'div';
+                return (
+                  <CardTag
+                    key={`${sp.name}-${idx}`}
+                    href={sp.url}
+                    target={sp.url ? '_blank' : undefined}
+                    rel={sp.url ? 'noopener noreferrer' : undefined}
+                    title={`${sp.name} (${(sp as any).category || (sp as any).tier || 'Partner'})`}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      height: '58px',
+                      padding: isRyux ? '3px 14px' : '5px 18px',
+                      borderRadius: '12px',
+                      background: isRyux ? '#070a14' : '#ffffff',
+                      border: isRyux ? '2px solid rgba(230, 20, 50, 0.85)' : '1.5px solid rgba(255, 255, 255, 0.85)',
+                      textDecoration: 'none',
+                      flexShrink: 0,
+                      transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+                      boxShadow: isRyux
+                        ? '0 6px 20px rgba(220, 20, 60, 0.45), 0 0 16px rgba(220, 20, 60, 0.3)'
+                        : '0 5px 16px rgba(0,0,0,0.38)',
+                      cursor: sp.url ? 'pointer' : 'default',
+                    }}
+                    onMouseEnter={(e: any) => {
+                      e.currentTarget.style.transform = 'scale(1.12) translateY(-2px)';
+                      e.currentTarget.style.boxShadow = isRyux
+                        ? '0 8px 26px rgba(220, 20, 60, 0.75), 0 0 24px rgba(255, 40, 70, 0.6)'
+                        : '0 0 20px rgba(255, 183, 3, 0.85), 0 8px 18px rgba(0,0,0,0.55)';
+                    }}
+                    onMouseLeave={(e: any) => {
+                      e.currentTarget.style.transform = 'scale(1) translateY(0)';
+                      e.currentTarget.style.boxShadow = isRyux
+                        ? '0 6px 20px rgba(220, 20, 60, 0.45), 0 0 16px rgba(220, 20, 60, 0.3)'
+                        : '0 5px 16px rgba(0,0,0,0.38)';
+                    }}
+                  >
+                    <img
+                      src={sp.logo}
+                      alt={`${sp.name} Logo`}
+                      style={{
+                        height: isRyux ? '52px' : '44px',
+                        maxWidth: isRyux ? '140px' : '150px',
+                        objectFit: 'contain',
+                        display: 'block',
+                      }}
+                    />
+                  </CardTag>
+                );
+              })}
             </div>
           </div>
         </div>

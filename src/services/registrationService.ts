@@ -1,5 +1,24 @@
 import { supabase, pitchSupabase } from '../lib/supabase';
 
+// ─── Supabase table names ────────────────────────────────────────────────────
+// Pitch Perfect project (jonddiwnixoajiylqznx) → pitch_registrations + pitch_team_members
+// Wano Fest project  (ajntopxhnbposllktkgv) → registrations     + team_members
+export const PITCH_REGISTRATIONS_TABLE = 'pitch_registrations';
+export const PITCH_TEAM_MEMBERS_TABLE = 'pitch_team_members';
+export const WANO_REGISTRATIONS_TABLE = 'registrations';
+export const WANO_TEAM_MEMBERS_TABLE = 'team_members';
+
+// Both clients are created by the same factory, so one type covers both projects.
+type SupabaseLikeClient = typeof supabase;
+
+// PostgREST error message emitted when a column is not present in the table.
+const MISSING_COLUMN_RX = /could not find the '([^']+)' column/i;
+// Postgres SQLSTATE for a row-level-security policy rejection.
+const RLS_ERROR_CODE = '42501';
+
+const isRlsError = (error: { code?: string; message?: string } | null): boolean =>
+  !!error && (error.code === RLS_ERROR_CODE || /row-level security/i.test(error.message || ''));
+
 // Map of symposium event titles to their respective UUIDs in the Supabase `events` table
 export const SUPABASE_EVENT_MAP: Record<string, string> = {
   // Technical Events
@@ -21,6 +40,8 @@ export const SUPABASE_EVENT_MAP: Record<string, string> = {
   'short film': '2fb71c45-3711-48b2-b97e-95969643f1b4',
   'e-sports': '776b7a2f-3d22-49ae-8b5f-aa50e563caa2',
   'esports': '776b7a2f-3d22-49ae-8b5f-aa50e563caa2',
+  'ipl auction': '776b7a2f-3d22-49ae-8b5f-aa50e563caa2',
+  'ipl-auction': '776b7a2f-3d22-49ae-8b5f-aa50e563caa2',
 };
 
 export interface RegistrationInput {
@@ -38,6 +59,10 @@ export interface RegistrationInput {
   projectTitle?: string;
   projectDescription?: string;
   transactionId: string;
+  /** Total team size (leader included). Used by the Pitch project's `team_size` column. */
+  teamSize?: number;
+  /** Pitch participation category, e.g. "IDEA PITCH" / "PROJECT PITCH". */
+  participationCategory?: string;
   screenshotName?: string;
   isSkippingPayment?: boolean;
   userId?: string | null;
@@ -100,8 +125,85 @@ export async function getEventUuid(eventName: string, eventType: string = 'techn
 }
 
 /**
- * Saves registration to Supabase (`registrations` + `team_members` tables).
- * Automatically chooses the appropriate Supabase project (Pitch Perfect vs Wano Fest).
+ * Inserts a single row, automatically retrying without any column that the remote
+ * PostgREST schema cache does not know (error code PGRST204).
+ *
+ * This keeps registrations saving even when the live table schema differs from the
+ * code — e.g. the Pitch Perfect project's `pitch_registrations` table has no
+ * `department`, `leader_name` or `leader_year` columns unless the optional
+ * migration in `sql/pitch-supabase-setup.sql` has been applied.
+ */
+async function insertRowAdaptive(
+  client: SupabaseLikeClient,
+  table: string,
+  payload: Record<string, unknown>
+): Promise<{ data: { id?: string } | null; error: { message: string; code?: string } | null }> {
+  const working: Record<string, unknown> = { ...payload };
+  let lastError: { message: string; code?: string } | null = null;
+
+  for (let attempt = 0; attempt < 12; attempt += 1) {
+    const { data, error } = await client.from(table).insert([working]).select('id').single();
+    if (!error) return { data, error: null };
+
+    lastError = error;
+    const missing = (error.message || '').match(MISSING_COLUMN_RX)?.[1];
+    if (!missing || !(missing in working)) return { data: null, error };
+
+    console.warn(`⚠️ Supabase: column "${missing}" is not present in ${table} — retrying without it.`);
+    delete working[missing];
+  }
+
+  return { data: null, error: lastError };
+}
+
+/**
+ * Inserts several rows at once with the same PGRST204 self-healing behaviour as
+ * `insertRowAdaptive` (unknown columns are stripped from every row).
+ */
+async function insertRowsAdaptive(
+  client: SupabaseLikeClient,
+  table: string,
+  rows: Array<Record<string, unknown>>
+): Promise<{ error: { message: string; code?: string } | null }> {
+  let working = rows.map((row) => ({ ...row }));
+  let lastError: { message: string; code?: string } | null = null;
+
+  for (let attempt = 0; attempt < 12; attempt += 1) {
+    const { error } = await client.from(table).insert(working);
+    if (!error) return { error: null };
+
+    lastError = error;
+    const missing = (error.message || '').match(MISSING_COLUMN_RX)?.[1];
+    if (!missing || !(missing in working[0])) return { error };
+
+    console.warn(`⚠️ Supabase: column "${missing}" is not present in ${table} — retrying without it.`);
+    working = working.map((row) => {
+      const next = { ...row };
+      delete next[missing];
+      return next;
+    });
+  }
+
+  return { error: lastError };
+}
+
+/** Hint shown when Supabase rejects a write because of row-level-security policies. */
+export const RLS_SETUP_HINT =
+  'Supabase row-level security blocked the insert. Run sql/pitch-supabase-setup.sql in the ' +
+  'Pitch Perfect Supabase SQL Editor (Project → SQL Editor) to allow public registrations.';
+
+/**
+ * Saves a registration to Supabase and returns a result object describing the outcome.
+ *
+ * Automatically targets the right project/table pair:
+ *   • Pitch Perfect → `pitch_registrations` + `pitch_team_members`
+ *   • Wano Fest     → `registrations`       + `team_members`
+ *
+ * Columns that do not exist in the live table are dropped automatically (PostgREST
+ * PGRST204), so the function keeps storing rows even if the optional migrations in
+ * `sql/pitch-supabase-setup.sql` have not been applied. Row-level-security failures
+ * are reported back through `RegistrationResult.error` so the UI can surface them
+ * instead of silently reporting success.
  */
 export async function saveRegistrationToSupabase(
   input: RegistrationInput
@@ -110,7 +212,8 @@ export async function saveRegistrationToSupabase(
     const isPitch = (input.eventName || '').toLowerCase().includes('pitch');
     const targetClient = isPitch ? pitchSupabase : supabase;
 
-    const eventId = await getEventUuid(input.eventName, input.eventType);
+    // `event_id` only applies to the Wano Fest project (it owns the `events` table).
+    const eventId = isPitch ? null : await getEventUuid(input.eventName, input.eventType);
 
     const { data: { session } } = await targetClient.auth.getSession();
     const resolvedUserId = input.userId ?? session?.user?.id ?? null;
@@ -144,61 +247,88 @@ export async function saveRegistrationToSupabase(
     let regError: any = null;
 
     if (isPitch) {
-      const pitchPayload = {
+      const pitchPayload: Record<string, unknown> = {
         team_name: input.teamName.trim() || 'Team',
+        team_size: input.teamSize ?? (input.members?.length ?? 0) + 1,
         college_name: input.collegeName.trim() || 'SSREC',
+        leader_full_name: input.leaderName.trim() || 'Leader',
         leader_email: input.leaderEmail.trim() || '',
+        leader_mobile: input.leaderPhone.trim() || '',
         project_title: input.projectTitle?.trim() || 'General Entry',
-        transaction_id: input.transactionId.trim() || 'NONE',
+        participation_category: input.participationCategory?.trim() || input.eventType || 'IDEA PITCH',
+        transaction_id: input.transactionId.trim() || (input.isSkippingPayment ? 'PAY-AT-VENUE' : 'NONE'),
+        payment_screenshot_url: input.screenshotName || (input.isSkippingPayment ? 'PAY-AT-VENUE' : 'NONE'),
         payment_status: 'PENDING',
+        // Optional rich columns — removed automatically if sql/pitch-supabase-setup.sql
+        // has not been applied to this project yet.
+        registration_id: input.registrationId,
+        event_type: input.eventType || 'technical',
+        department: input.department.trim() || 'Not Specified',
+        leader_name: input.leaderName.trim() || 'Leader',
+        leader_phone: input.leaderPhone.trim() || '',
+        leader_department: input.leaderDepartment?.trim() || input.department.trim() || 'General',
+        leader_year: input.leaderYear || '3rd Year',
+        project_description: input.projectDescription?.trim() || 'No description provided.',
+        ...(resolvedUserId ? { user_id: resolvedUserId } : {}),
       };
-      const pitchRes = await targetClient
-        .from('pitch_registrations')
-        .insert([pitchPayload])
-        .select('id')
-        .single();
+      // NOTE: `event_id` is intentionally omitted for Pitch — this project has no
+      // `events` table, so a Wano-project UUID could never satisfy a foreign key.
+      const pitchRes = await insertRowAdaptive(
+        pitchSupabase,
+        PITCH_REGISTRATIONS_TABLE,
+        pitchPayload
+      );
       regData = pitchRes.data;
       regError = pitchRes.error;
     } else {
-      const res = await targetClient
-        .from('registrations')
-        .insert([insertPayload])
-        .select('id')
-        .single();
+      const res = await insertRowAdaptive(targetClient, WANO_REGISTRATIONS_TABLE, insertPayload);
       regData = res.data;
       regError = res.error;
     }
 
     if (regError) {
+      const hint = isRlsError(regError) ? ` ${RLS_SETUP_HINT}` : '';
       console.warn('⚠️ Supabase registration note:', regError.message);
       return {
         success: false,
         registrationId: input.registrationId,
-        error: regError.message,
+        error: `${regError.message}${hint}`,
       };
     }
 
     const createdId = regData?.id;
 
-    // 2. Insert team members into team_members table
+    // 2. Insert team members into the project's own members table
+    //    Pitch → `pitch_team_members` (columns: registration_id, member_number,
+    //    full_name, email, mobile) · Wano → `team_members` (full_name, email, phone…)
     if (createdId && input.members && input.members.length > 0) {
       const validMembers = input.members.filter((m) => m.name && m.name.trim().length > 0);
       if (validMembers.length > 0) {
-        const { error: tmError } = await supabase.from('team_members').insert(
-          validMembers.map((m, idx) => ({
+        const membersTable = isPitch ? PITCH_TEAM_MEMBERS_TABLE : WANO_TEAM_MEMBERS_TABLE;
+        const memberRows = validMembers.map((m, idx) => {
+          const base: Record<string, unknown> = {
             registration_id: createdId,
             member_number: idx + 1,
             full_name: m.name.trim(),
             email: m.email?.trim() || null,
-            phone: m.phone?.trim() || null,
-            department: m.department?.trim() || input.department || null,
-            year: m.year || null,
-          }))
-        );
+          };
+          if (isPitch) {
+            // The Pitch project stores the contact number in `mobile`.
+            base.mobile = m.phone?.trim() || null;
+          } else {
+            base.phone = m.phone?.trim() || null;
+          }
+          // Optional columns — stripped automatically when they do not exist.
+          base.department = m.department?.trim() || input.department || null;
+          base.year = m.year || null;
+          return base;
+        });
+
+        const { error: tmError } = await insertRowsAdaptive(targetClient, membersTable, memberRows);
         if (tmError) {
-          console.warn('⚠️ Supabase team_members note:', tmError.message);
+          console.warn(`⚠️ Supabase ${membersTable} note:`, tmError.message);
         } else {
-          console.log(`✅ Saved ${validMembers.length} member(s) to team_members`);
+          console.log(`✅ Saved ${validMembers.length} member(s) to ${membersTable}`);
         }
       }
     }

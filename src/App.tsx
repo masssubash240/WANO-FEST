@@ -411,7 +411,8 @@ function App() {
         onSelectCategory={(cat) => handleSelectCategory(cat)}
       />
 
-      {/* â”€â”€â”€ HORIZONTAL SCROLL STORY: THE WORLD OF WANO FEST â”€â”€â”€ */}
+
+      {/* ─── HORIZONTAL SCROLL STORY: THE WORLD OF WANO FEST ─── */}
       <WorldOfWanoFest
         onSelectCategory={handleSelectCategory}
         onOpenEventDetail={handleOpenEventDetail}
@@ -448,10 +449,10 @@ function App() {
       {/* â”€â”€â”€ GRAND LINE SCHEDULE â”€â”€â”€ */}
       <Schedule />
 
-      {/* â”€â”€â”€ FAQ â”€â”€â”€ */}
+      {/* ─── FAQ ─── */}
       <FAQ />
 
-      {/* â”€â”€â”€ THE CREW / CONTACT HEADQUARTERS â”€â”€â”€ */}
+      {/* ─── THE CREW / CONTACT HEADQUARTERS ─── */}
       <CrewContactSection />
 
       {/* â”€â”€â”€ CHOOSE YOUR EVENT. CREATE YOUR LEGEND. (Section 21) â”€â”€â”€ */}

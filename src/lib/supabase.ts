@@ -65,3 +65,35 @@ export const pitchSupabase = createClient(PITCH_SUPABASE_URL, PITCH_SUPABASE_ANO
 //   ('E-Sports Arena (Gaming Championship)', 'e-sports-arena', 'non-technical', 'PUBG, Free Fire, Chess and Carrom Pool Tournament', true)
 // ON CONFLICT (slug) DO NOTHING;
 // ─────────────────────────────────────────────────────────────────────────────
+
+// ─── PITCH PERFECT SUPABASE (jonddiwnixoajiylqznx) — VERIFIED SCHEMA ─────────
+// Pitch Perfect registrations live in this separate project and are written with
+// the public (anon) publishable key. Live tables (checked 2026-09):
+//
+//   public.pitch_registrations
+//     id, team_name, team_size, college_name, leader_full_name, leader_email,
+//     leader_mobile, project_title, participation_category, transaction_id,
+//     payment_screenshot_url, payment_status, created_at, updated_at
+//     (+ optional: registration_id, event_type, department, leader_name,
+//        leader_phone, leader_department, leader_year, project_description, user_id)
+//
+//   public.pitch_team_members
+//     id, registration_id, member_number, full_name, email, mobile, created_at
+//     (+ optional: department, year, phone)
+//
+// NOTE: this project has NO `team_members` table and NO `events` table, so Pitch
+// registrations never send an `event_id`.
+//
+// ⚠️ The tables alone are not enough: RLS must allow public inserts, otherwise
+// PostgREST answers
+//     42501  new row violates row-level security policy
+// and nothing is stored (the old UI still reported success). Run the ready-made,
+// idempotent script
+//
+//     sql/pitch-supabase-setup.sql
+//
+// in Supabase Dashboard → project jonddiwnixoajiylqznx → SQL Editor.
+// registrationService.ts additionally strips any column that does not exist yet,
+// so registrations keep saving even before that migration is applied.
+// ─────────────────────────────────────────────────────────────────────────────
+

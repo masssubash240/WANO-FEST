@@ -154,12 +154,12 @@ export const WorldOfWanoFest: React.FC<WorldOfWanoFestProps> = ({ onSelectCatego
         <div
           style={{
             position: 'absolute',
-            top: '40px',
+            top: '22px',
             left: '0',
             right: '0',
             textAlign: 'center',
-            zIndex: 20,
-            pointerEvents: 'none',
+            zIndex: 25,
+            pointerEvents: 'auto',
           }}
         >
           <div
@@ -167,14 +167,14 @@ export const WorldOfWanoFest: React.FC<WorldOfWanoFestProps> = ({ onSelectCatego
               display: 'inline-flex',
               alignItems: 'center',
               gap: '12px',
-              marginBottom: '6px',
+              marginBottom: '4px',
             }}
           >
             <div style={{ width: '40px', height: '1.5px', background: 'linear-gradient(90deg, transparent, #d90429)' }} />
             <span
               style={{
                 fontFamily: 'var(--font-body)',
-                fontSize: '0.78rem',
+                fontSize: '0.74rem',
                 fontWeight: 800,
                 letterSpacing: '0.28em',
                 color: '#d90429',
